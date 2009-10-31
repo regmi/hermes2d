@@ -377,7 +377,8 @@ class ScalarView(object):
                 image = engine.current_scene
                 image.scene.background = (1.0, 1.0, 1.0)
                 image.scene.foreground = (0.0, 0.0, 0.0)
-                mlab.colorbar(orientation="vertical")
+                c = mlab.colorbar(orientation="vertical")
+                c.position = (0.000, 0.035)
                 if notebook:
                     mlab.savefig(filename)
                 else:
