@@ -74,6 +74,28 @@ def plot_sln_mpl(sln, method="default", just_mesh=False, axes=None):
     else:
         raise ValueError("Unknown method (%s)" % method)
 
+# Plot solution for mesh editor on the online lab
+def plotsln(mesh, sln, colorbar=False):
+    print "Plotting..."
+    x = [n[0] for n in mesh.nodes]
+    y = [n[1] for n in mesh.nodes]
+    z = [0]*len(y)
+    from enthought.mayavi import mlab
+    mlab.options.offscreen = True
+    #mlab.options.show_scalar_bar = False
+    mlab.triangular_mesh(x, y, z, mesh.elems, scalars=sln)
+    engine = mlab.get_engine()
+    image = engine.current_scene
+    image.scene.background = (1.0, 1.0, 1.0)
+    image.scene.foreground = (0.0, 0.0, 0.0)
+    if colorbar:
+        mlab.colorbar(orientation="vertical")
+    mlab.view(0, 0)
+    mlab.savefig("sln.png")
+    print "Plotting completed."
+    print "Solution:"
+    print " "
+
 def plot_sln_mayavi(sln, notebook=False):
     """
     Plots the Solution() instance sln using Linearizer() and matplotlib.
