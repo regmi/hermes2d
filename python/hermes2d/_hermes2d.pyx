@@ -473,6 +473,15 @@ cdef class H1Shapeset:
     def __dealloc__(self):
         delete(self.thisptr)
 
+cdef class Shapeset:
+    cdef c_Shapeset *thisptr
+
+    def __cinit__(self):
+        self.thisptr = new_Shapeset()
+
+    def __dealloc__(self):
+        delete(self.thisptr)
+
 cdef class PrecalcShapeset:
     cdef c_PrecalcShapeset *thisptr
 
@@ -504,6 +513,19 @@ cdef class H1Space:
 
     def get_num_dofs(self):
         return self.thisptr.get_num_dofs()
+
+cdef class Space:
+    cdef c_Space *thisptr
+
+    def __init__(self, Mesh m, Shapeset s):
+        self.thisptr = new_Space(m.thisptr, s.thisptr)
+
+    def assign_dofs(self, first_dof=0, stride=1):
+        return self.thisptr.assign_dofs(first_dof, stride)
+
+    def __dealloc__(self):
+        delete(self.thisptr)
+
 
 cdef api object H1Space_from_C(c_H1Space *h):
     cdef H1Space n
@@ -594,6 +616,17 @@ cdef class Solution(MeshFunction):
         cdef scalar *pvec = <scalar *>vec.data
         (<c_Solution *>(self.thisptr)).set_fe_solution(s.thisptr, pss.thisptr,
                 pvec)
+
+    def plot(self, *args, **kwargs):
+        """
+        Plots the solution and shows it to the user.
+
+        It passes all arguments to the ScalarView.show() function, so read its
+        documentation for the meaning.
+        """
+        from hermes2d import ScalarView
+        sview = ScalarView()
+        sview.show(self, *args, **kwargs)
 
     # the get_fe_solution() method is is not yet implemented in the C++ hermes:
     #def get_fe_solution(self):
@@ -1215,6 +1248,16 @@ cdef class ScalarView(View):
     def wait(self):
         self.thisptr.wait()
 
+    def plot(self, *args, **kwargs):
+        """
+        Plots the solution and shows it to the user.
+
+        It passes all arguments to the ScalarView.show() function, so read its
+        documentation for the meaning.
+        """
+        self.show(*args, **kwargs)
+
+
 cdef class BaseView(View):
     cdef c_BaseView *thisptr
 
@@ -1437,3 +1480,9 @@ cdef api object run_cmd(char *text, object namespace):
         s = "".join(traceback.format_exception(etype, value, tb))
         s = "Exception raised in the Python code:\n" + s
         throw_exception(s)
+
+cdef extern from "space.cpp":
+    int assign_dofs(Space *s)
+
+def _assign_dofs(s):
+    assign_dofs(s.thisptr)

@@ -136,6 +136,10 @@ cdef extern from "hermes2d.h":
     cdef struct c_PrecalcShapeset "PrecalcShapeset"
     c_PrecalcShapeset *new_PrecalcShapeset "new PrecalcShapeset" (c_H1Shapeset *s)
 
+    ctypedef struct c_Shapeset "Shapeset"
+    c_H1Shapeset *new_Shapeset "new Shapeset" ()
+
+
     ctypedef double scalar
     cdef struct EdgePos "EdgePos":
         int marker
@@ -152,6 +156,11 @@ cdef extern from "hermes2d.h":
         void set_bc_values_edge "set_bc_values"(scalar (*bc_value_callback_by_edge)(EdgePos *ep))
     c_H1Space *new_H1Space "new H1Space" (c_Mesh *m,
             c_H1Shapeset *h)
+
+    cdef struct c_Space "Space":
+        int assign_dofs(int first_dof, int stride)
+    c_Space *new_Space "new Space" (c_Mesh *m, c_Shapeset *h)
+
 
     ctypedef struct RealFunction "Function<double>":
         c_Element* get_active_element()
