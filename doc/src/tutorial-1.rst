@@ -159,6 +159,41 @@ call the method ``load()``:
       H2DReader mloader;
       mloader.load("domain.mesh", &mesh);
 
+The corresponding code in python is:
+::
+
+    # Import modules
+    from hemres2d import Mesh, MeshView
+    # Creates a mesh from a list of vertices, elements, boundaries and curves.
+    mesh = Mesh()
+    mesh.create([
+            [0, -1],
+            [1, -1],
+            [-1, 0],
+            [0, 0],
+            [1, 0],
+            [-1, 1],
+            [0, 1],
+            [0.707106781, 0.707106781]
+        ], [
+            [0, 1, 4, 3, 0],
+            [3, 4, 7, 0],   
+            [3, 7, 6, 0],
+            [2, 3, 6, 5, 0]
+        ], [
+            [0, 1, 1],
+            [1, 4, 2],
+            [3, 0, 4],
+            [4, 7, 2],
+            [7, 6, 2],
+            [2, 3, 4],
+            [6, 5, 2],
+            [5, 2, 3]
+        ], [
+            [4, 7, 45],
+            [7, 6, 45]
+        ])
+
 Note: To load the exodus-II mesh file, one has to use ``ExodusIIReader`` class instead.
 
 The following portion of code illustrates various types of initial mesh refinements.
@@ -181,6 +216,18 @@ meshes are at the heart of Hermes:
       mesh.refine_element(114, 1);         // refines element #114
                                            // anisotropically
 
+Similarly in python the code is:
+::
+
+      # perform some sample initial refinements
+      mesh.refine_all_elements()          # refines all elements
+      mesh.refine_towards_vertex(3, 4)    # refines mesh towards vertex #3 (4x)
+      mesh.refine_towards_boundary(2, 4)  # refines all elements along boundary 2 (4x)
+      #mesh.refine_element(86, 0);        # Refines element #86 isotropically.
+      #mesh.refine_element(112, 0);       # Refines element #112 isotropically.
+      #mesh.refine_element(84, 2);        # Refines element #84 anisotropically.
+      #mesh.refine_element(114, 1);       # Refines element #114 anisotropically.
+
 Other ways of modifying meshes on the fly include
 ::
 
@@ -193,7 +240,13 @@ Other ways of modifying meshes on the fly include
     Mesh::unrefine_element(int id);
     Mesh::unrefine_all_elements();
 
+In python also you can do:
+::
+  mesh.convert_triangles_to_quads()
+  mesh.convert_quads_to_triangles()
+
 See the file `src/mesh.cpp <http://git.hpfem.org/hermes2d.git/blob/HEAD:/src/mesh.cpp>`_ for more details. 
+
 The following code illustrates how to visualize the mesh using the class MeshView:
 ::
 
@@ -222,6 +275,21 @@ Every main.cpp file is finished with
 
 so that you have a chance to see the graphical output.
 
+In python the following code illustrates how to visualize the mesh using the class MeshView:
+::
+
+    # Display the Mesh
+    mesh.plot(filename="a.png")
+
+and you will see the following output
+
+.. image:: img/meshlab.png
+   :align: center
+   :width: 400
+   :height: 400
+   :alt: Image of the mesh created via the MeshView class.
+
+To view this example published on FEMhub online lab click `here <http://nb.femhub.org/pub/62>`_.
 
 
 Setting Up Finite Element Space (02)
@@ -386,6 +454,14 @@ We can now state our problem in the following way:
     wf.add_biform(0, 0, callback(bilinear_form));
     wf.add_liform(0, callback(linear_form));
 
+In python we can state our problem in the following way:
+
+::
+
+    # Initialize the weak formulation
+    wf = WeakForm(1) 
+    set_forms(wf) 
+
 The class WeakForm represents the weak formulation of the PDE and must be
 initialized with the number of equations in the system, in our case one. We then
 supply the class pointers to our bilinear and linear form functions. If the PDE
@@ -409,6 +485,15 @@ the H1Space we have created in the previous section.
     sys.set_spaces(1, &space);
     sys.set_pss(1, &pss);
 
+The corresponding python code is:
+::
+
+    # initialize the linear system and solver
+    solver = DummySolver()
+    sys = LinSystem(wf, solver)
+    sys.set_spaces(space)
+    sys.set_pss(pss) 
+
 The last line must be included for historical reasons. During matrix assembly,
 Hermes caches the values of all shape function polynomials for better performance.
 The cache is represented by the class PrecalcShapeset and you have to
@@ -416,6 +501,12 @@ include the following line at the beginning of your program:
 ::
 
     PrecalcShapeset pss(&shapeset);
+
+In python we can write:
+::
+
+    shapeset = H1Shapeset()
+    pss = PrecalcShapeset(shapeset)
 
 Finally, we tell LinSystem to assemble the stiffness matrix and the right-hand
 side and solve the resulting linear system: 
@@ -426,6 +517,17 @@ side and solve the resulting linear system:
     sys.assemble();
     sys.solve(1, &sln);
 
+The python code is:
+::
+
+    # Assemble the stiffness matrix and solve the system
+    sys.assemble()
+    A = sys.get_matrix()
+    b = sys.get_rhs()
+    from scipy.sparse.linalg import cg
+    x, res = cg(A, b)
+    sln = Solution()
+    sln.set_fe_solution(space, pss, x) 
 For the Poisson problem, we are finished. The last two lines can be repeated many 
 times in time-dependent problems. The instance of the class Solution, upon the
 completion of LinSystem::solve(), contains the approximate solution of
@@ -444,6 +546,33 @@ The following figure shows the output.
    :width: 400
    :height: 350
    :alt: Solution of the Poisson equation.
+
+To visualize the solution in python:
+::
+
+    # Visualize the solution
+    view = ScalarView("Solution")
+    view.show(sln, lib="mayavi", filename="a.png", notebook=True)
+
+You can visualize the mesh using the MeshView class:
+::
+    # Display the Mesh
+    mesh.plot(filename="b.png")
+
+Furthermore, you can position the images by using the following html codes:
+::
+    # Positioning the images
+    print """<html><table border=1><tr><td><span style="position: relative;"><img src="cell://a.png" ></span></td><td><img src="cell://b.png" width="540" height="405"></td></tr></table></html>"""
+
+The following figure shows the output.
+
+.. image:: ../img/poissonlab.png
+   :align: center
+   :width: 625
+   :height: 400
+   :alt: Solution of the Poisson equation.
+
+To view this example published on FEMhub online lab click `here <http://nb.femhub.org/pub/56>`_.
 
 Boundary Conditions (04, 05, 06)
 --------------------------------
