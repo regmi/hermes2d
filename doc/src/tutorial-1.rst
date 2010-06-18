@@ -283,7 +283,7 @@ In python the following code illustrates how to visualize the mesh using the cla
 
 and you will see the following output
 
-.. image:: img/meshlab.png
+.. image:: img/meshpython.png
    :align: center
    :width: 400
    :height: 400
@@ -566,7 +566,7 @@ Furthermore, you can position the images by using the following html codes:
 
 The following figure shows the output.
 
-.. image:: ../img/poissonlab.png
+.. image:: img/poissonpython.png
    :align: center
    :width: 625
    :height: 400
@@ -601,12 +601,26 @@ portion of the domain boundary belongs to, by returning one of the predefined co
 BC_ESSENTIAL, BC_NATURAL, BC_NONE. The second callback needs to return the boundary value for a given marker
 and position on the boundary (only needed for essential boundary condition markers - for natural
 boundary conditions this value is ignored).
+
+In python the user can set boundary conditions by:
+::
+
+  set_bc(space)
+
 The space initialization can then look as follows:
 ::
 
     H1Space space(&mesh, &shapeset);
     space.set_bc_types(bc_types);
     space.set_essential_bc_values(essential_bc_values);
+
+In python the corresponding code would be:
+::
+
+  space = H1Space(mesh, shapeset)
+    space.set_uniform_order(P_INIT)      # PINIT is initial polynomial degree
+    in all elements
+
 
 Suppose we would like to modify the previous Poisson model problem in the following way:
 
@@ -642,6 +656,14 @@ For the value $CONST_F = -4$, the output is shown below:
    :align: center
    :width: 400
    :height: 350
+   :alt: Solution of the Dirichlet problem.
+
+The output of python code will be:
+
+.. image:: img/dirichlet.png
+   :align: center
+   :width: 883 
+   :height: 450
    :alt: Solution of the Dirichlet problem.
 
 Neumann BC
@@ -694,6 +716,15 @@ and will be added to the WeakForm by the following code:
     wf.add_liform(0, callback(linear_form));
     wf.add_liform_surf(0, callback(linear_form_surf));
 
+The corresponding code in python is:
+::
+
+  # Initialize the discrete problem
+  wf = WeakForm(1)
+  set_forms(wf, -1)
+  set_forms_surf(wf) 
+
+
 The surface linear form is defined as follows:
 
 ::
@@ -719,6 +750,44 @@ capture the singular gradient.
     H2DReader mloader;
     mloader.load("domain.mesh", &mesh);
     mesh.refine_towards_vertex(3, CORNER_REF_LEVEL);
+
+the corresponding code in python is:
+::
+        # Initialize the mesh
+        mesh = Mesh()
+
+        # Create a mesh from a list of nodes, elements, boundary and nurbs.
+        mesh.create([
+               [0, -1],
+               [1, -1],
+               [-1, 0],
+               [0, 0],
+               [1, 0],
+               [-1, 1],
+               [0, 1],
+               [0.707106781, 0.707106781]
+           ], [
+               [0, 1, 4, 3, 0],
+               [3, 4, 7, 0],  
+               [3, 7, 6, 0],
+               [2, 3, 6, 5, 0]
+           ], [
+               [0, 1, 1],
+               [1, 4, 2],
+               [3, 0, 4],
+               [4, 7, 2],
+               [7, 6, 2],
+               [2, 3, 4],
+               [6, 5, 2],
+               [5, 2, 3]
+           ], [
+               [4, 7, 45],
+               [7, 6, 45]
+           ])
+
+        # Initial mesh refinements
+        mesh.refine_towards_vertex(3, CORNER_REF_LEVEL)
+
 
 The gradient magnitude can be visualized via a MagFilter:
 ::
@@ -749,6 +818,12 @@ shown in the following figures:
 .. raw:: html
 
    <hr style="clear: both; visibility: hidden;">
+
+In python the output is the following:
+.. image:: ../img/neumann.png
+   :align: left
+   :width:75% 
+   :alt: Solution of the Neumann problem.
 
 Newton BC
 ~~~~~~~~~
