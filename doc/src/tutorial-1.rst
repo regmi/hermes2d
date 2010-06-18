@@ -285,8 +285,7 @@ and you will see the following output
 
 .. image:: img/meshpython.png
    :align: center
-   :width: 400
-   :height: 400
+   :width: 80% 
    :alt: Image of the mesh created via the MeshView class.
 
 To view this example published on FEMhub online lab click `here <http://nb.femhub.org/pub/62>`_.
@@ -568,8 +567,7 @@ The following figure shows the output.
 
 .. image:: img/poissonpython.png
    :align: center
-   :width: 625
-   :height: 400
+   :width: 80% 
    :alt: Solution of the Poisson equation.
 
 To view this example published on FEMhub online lab click `here <http://nb.femhub.org/pub/56>`_.
@@ -660,10 +658,10 @@ For the value $CONST_F = -4$, the output is shown below:
 
 The output of python code will be:
 
-.. image:: img/dirichlet.png
+.. image:: img/dirichletpython.png
    :align: center
-   :width: 883 
-   :height: 450
+   :width: 80%
+   :height: 80%
    :alt: Solution of the Dirichlet problem.
 
 Neumann BC
@@ -820,8 +818,8 @@ shown in the following figures:
    <hr style="clear: both; visibility: hidden;">
 
 In python the output is the following:
-.. image:: ../img/neumann.png
-   :align: left
+.. image:: img/neumannpython.png
+   :align: center 
    :width:75% 
    :alt: Solution of the Neumann problem.
 
