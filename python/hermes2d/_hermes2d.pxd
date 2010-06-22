@@ -264,7 +264,7 @@ cdef extern from "hermes2d.h":
         void add_biform_surf(int i, int j, ...)
         void add_vector_form(int i, ...)
         void add_liform_data(int i, void *data)
-        void add_liform_surf(int i, ...)
+        void add_vector_form_surf(int i, ...)
     c_WeakForm *new_WeakForm "new WeakForm" (int neq)
 
     cdef struct c_Solver "Solver":
