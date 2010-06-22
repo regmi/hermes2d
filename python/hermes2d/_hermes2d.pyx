@@ -633,8 +633,8 @@ cdef class L2Space:
 
         Suggested Use: ```l2_space = L2Space(mesh, l2_shapeset)```
     """
-    def __init__(self, Mesh m, L2Shapeset s):
-        self.thisptr = new_L2Space(m.thisptr, s.thisptr)
+    def __init__(self, Mesh m):
+        self.thisptr = new_L2Space(m.thisptr)
 
     def __dealloc__(self):
         delete(self.thisptr)

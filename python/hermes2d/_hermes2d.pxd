@@ -186,7 +186,7 @@ cdef extern from "hermes2d.h":
         void set_essential_bc_values(scalar (*bc_value_callback_by_coord)(int ess_bdy_marker,
             double x, double y))
         void set_essential_bc_values_edge "set_essential_bc_values"(scalar (*bc_value_callback_by_edge)(EdgePos *ep))
-    c_L2Space *new_L2Space "new L2Space" (c_Mesh *m, c_L2Shapeset *h)
+    c_L2Space *new_L2Space "new L2Space" (c_Mesh *m)
 
     ctypedef struct RealFunction "Function<double>":
         c_Element* get_active_element()
@@ -261,9 +261,9 @@ cdef extern from "hermes2d.h":
 
     cdef struct c_WeakForm "WeakForm":
         void add_matrix_form(int i, int j, ...)
-        void add_biform_surf(int i, int j, ...)
+        void add_matrix_form_surf(int i, int j, ...)
         void add_vector_form(int i, ...)
-        void add_liform_data(int i, void *data)
+        void add_vector_form_data(int i, void *data)
         void add_vector_form_surf(int i, ...)
     c_WeakForm *new_WeakForm "new WeakForm" (int neq)
 
