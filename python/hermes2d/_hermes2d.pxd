@@ -267,7 +267,7 @@ cdef extern from "hermes2d.h":
         void add_vector_form_surf(int i, ...)
     c_WeakForm *new_WeakForm "new WeakForm" (int neq)
 
-    cdef struct c_Solver "Solver":
+    cdef struct c_CommonSolver "CommonSolver":
         pass
 
     cdef struct c_LinSystem "LinSystem":
@@ -282,7 +282,7 @@ cdef extern from "hermes2d.h":
         void get_matrix(int *Ap, int *Ai, scalar *Ax, int size)
         void get_rhs(scalar *RHS, int size)
     c_LinSystem *new_LinSystem "new LinSystem" (c_WeakForm *wf,
-            c_Solver *solver)
+            c_CommonSolver *solver)
 
     cdef struct c_RefSystem "RefSystem":
         void assemble()
@@ -464,10 +464,10 @@ cdef class LinSystem:
 cdef class RefSystem(LinSystem):
     pass
 
-cdef class Solver:
-    cdef c_Solver *thisptr
+cdef class CommonSolver:
+    cdef c_CommonSolver *thisptr
 
-cdef class DummySolver(Solver):
+cdef class DummySolver(CommonSolver):
     pass
 
 cdef class WeakForm:

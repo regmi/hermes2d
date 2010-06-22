@@ -871,17 +871,17 @@ cdef class WeakForm:
     def __dealloc__(self):
         delete(self.thisptr)
 
-cdef class DummySolver(Solver):
+cdef class DummySolver(CommonSolver):
 
     def __cinit__(self):
-        self.thisptr = <c_Solver *>(new_DummySolver())
+        self.thisptr = <c_CommonSolver *>(new_DummySolver())
 
     def __dealloc__(self):
         delete(self.thisptr)
 
 cdef class LinSystem:
 
-    def __init__(self, WeakForm wf, Solver solver):
+    def __init__(self, WeakForm wf, CommonSolver solver):
         self.thisptr = new_LinSystem(wf.thisptr, solver.thisptr)
 
     #def __dealloc__(self):
