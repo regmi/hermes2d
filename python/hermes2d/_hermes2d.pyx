@@ -607,8 +607,8 @@ cdef class PrecalcShapeset:
 
 cdef class H1Space:
 
-    def __init__(self, Mesh m, H1Shapeset s):
-        self.thisptr = new_H1Space(m.thisptr, s.thisptr)
+    def __init__(self, Mesh m):
+        self.thisptr = new_H1Space(m.thisptr)
 
     def __dealloc__(self):
         delete(self.thisptr)
