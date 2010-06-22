@@ -261,9 +261,9 @@ cdef extern from "hermes2d.h":
             int item1)
 
     cdef struct c_WeakForm "WeakForm":
-        void add_biform(int i, int j, ...)
+        void add_matrix_form(int i, int j, ...)
         void add_biform_surf(int i, int j, ...)
-        void add_liform(int i, ...)
+        void add_vector_form(int i, ...)
         void add_liform_data(int i, void *data)
         void add_liform_surf(int i, ...)
     c_WeakForm *new_WeakForm "new WeakForm" (int neq)
