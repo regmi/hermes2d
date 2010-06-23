@@ -30,13 +30,13 @@ cdef c_Ord _order_lf(int n, double *wt, FuncOrd *u, GeomOrd
     return int_v_ord(n, wt, u)
 
 def set_forms(WeakForm wf, int k=2):
-    wf.thisptr.add_biform(0, 0, &bilinear_form, &bilinear_form_ord)
+    wf.thisptr.add_matrix_form(0, 0, &bilinear_form, &bilinear_form_ord)
     
     if k == 2:
-        wf.thisptr.add_liform(0, &linear_form_p2, &_order_lf)
+        wf.thisptr.add_vector_form(0, &linear_form_p2, &_order_lf)
     elif k == -1:
-        wf.thisptr.add_liform(0, &linear_form_m1, &_order_lf)
+        wf.thisptr.add_vector_form(0, &linear_form_m1, &_order_lf)
     elif k == -4:
-        wf.thisptr.add_liform(0, &linear_form_m4, &_order_lf)
+        wf.thisptr.add_vector_form(0, &linear_form_m4, &_order_lf)
     else:
         raise NotImplementedError()
