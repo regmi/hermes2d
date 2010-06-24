@@ -260,18 +260,18 @@ cdef extern from "hermes2d.h":
             int item1)
 
     cdef struct c_WeakForm "WeakForm":
-        void add_biform(int i, int j, ...)
-        void add_biform_surf(int i, int j, ...)
-        void add_liform(int i, ...)
-        void add_liform_data(int i, void *data)
-        void add_liform_surf(int i, ...)
+        void add_matrix_form(int i, int j, ...)
+        void add_matrix_form_surf(int i, int j, ...)
+        void add_vector_form(int i, ...)
+        void add_vector_form_data(int i, void *data)
+        void add_vector_form_surf(int i, ...)
     c_WeakForm *new_WeakForm "new WeakForm" (int neq)
 
-    cdef struct c_Solver "Solver":
+    cdef struct c_CommonSolver "CommonSolver":
         pass
 
     cdef struct c_LinSystem "LinSystem":
-        void set_spaces(int n, ...)
+        void set_spaces()
         void set_pss(int n, ...)
         c_H1Space *get_space(int n)
         c_PrecalcShapeset *get_pss(int n)
@@ -281,7 +281,8 @@ cdef extern from "hermes2d.h":
         void save_matrix_matlab(char *filename, char *varname)
         void get_matrix(int *Ap, int *Ai, scalar *Ax, int size)
         void get_rhs(scalar *RHS, int size)
-    c_LinSystem *new_LinSystem "new LinSystem" (c_WeakForm *wf)
+    c_LinSystem *new_LinSystem "new LinSystem" (c_WeakForm *wf,
+            c_CommonSolver *solver)
 
     cdef struct c_RefSystem "RefSystem":
         void assemble()
@@ -463,10 +464,10 @@ cdef class LinSystem:
 cdef class RefSystem(LinSystem):
     pass
 
-cdef class Solver:
-    cdef c_Solver *thisptr
+cdef class CommonSolver:
+    cdef c_CommonSolver *thisptr
 
-cdef class DummySolver(Solver):
+cdef class DummySolver(CommonSolver):
     pass
 
 cdef class WeakForm:

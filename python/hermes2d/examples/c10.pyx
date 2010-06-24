@@ -33,5 +33,5 @@ cdef c_Ord _order_bf(int n, double *wt, FuncOrd *u, FuncOrd *v, GeomOrd *e, ExtD
 
 
 def set_forms(WeakForm wf):
-    wf.thisptr.add_biform(0, 0, &biform1, &_order_bf, H2D_SYM, 1)
-    wf.thisptr.add_biform(0, 0, &biform2, &_order_bf, H2D_SYM, 2)
+    wf.thisptr.add_matrix_form(0, 0, &biform1, &_order_bf, H2D_SYM, 1)
+    wf.thisptr.add_matrix_form(0, 0, &biform2, &_order_bf, H2D_SYM, 2)
