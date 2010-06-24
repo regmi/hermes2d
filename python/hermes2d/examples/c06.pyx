@@ -45,9 +45,9 @@ cdef c_Ord _order_lf(int n, double *wt, FuncOrd *u, GeomOrd
     return int_v_ord(n, wt, u)
 
 def set_forms(WeakForm dp):
-    dp.thisptr.add_biform(0, 0, &bilinear_form, &_order_bf)
-    dp.thisptr.add_biform_surf(0, 0, &bilinear_form_surf_06, &_order_bf_surf_06)
-    dp.thisptr.add_liform_surf(0, &linear_form_surf_06, &_order_lf)
+    dp.thisptr.add_matrix_form(0, 0, &bilinear_form, &_order_bf)
+    dp.thisptr.add_matrix_form_surf(0, 0, &bilinear_form_surf_06, &_order_bf_surf_06)
+    dp.thisptr.add_vector_form_surf(0, &linear_form_surf_06, &_order_lf)
 
 def set_bc(H1Space space):
     space.thisptr.set_bc_types(&bc_type_06)

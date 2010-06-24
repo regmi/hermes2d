@@ -174,7 +174,8 @@ cdef extern from "hermes2d.h":
         void set_essential_bc_values(scalar (*bc_value_callback_by_coord)(int ess_bdy_marker,
             double x, double y))
         void set_essential_bc_values_edge "set_essential_bc_values"(scalar (*bc_value_callback_by_edge)(EdgePos *ep))
-    c_H1Space *new_H1Space "new H1Space" (c_Mesh *m)
+    c_H1Space *new_H1Space "new H1Space" (c_Mesh *m) #c_BCType bt, scalar s,
+	    #int p_init, c_H1Shapeset *h )
 
     cdef struct c_L2Space "L2Space":
         void set_uniform_order(int tri_order)
@@ -260,28 +261,32 @@ cdef extern from "hermes2d.h":
             int item1)
 
     cdef struct c_WeakForm "WeakForm":
-        void add_biform(int i, int j, ...)
-        void add_biform_surf(int i, int j, ...)
-        void add_liform(int i, ...)
-        void add_liform_data(int i, void *data)
-        void add_liform_surf(int i, ...)
+        void add_matrix_form(int i, int j, ...)
+        void add_matrix_form_surf(int i, int j, ...)
+        void add_vector_form(int i, ...)
+        void add_vector_form_data(int i, void *data)
+        void add_vector_form_surf(int i, ...)
     c_WeakForm *new_WeakForm "new WeakForm" (int neq)
 
-    cdef struct c_Solver "Solver":
+    cdef struct c_CommonSolver "CommonSolver":
         pass
 
     cdef struct c_LinSystem "LinSystem":
         void set_spaces(int n, ...)
+        void set_spaces2(int n, ...)
         void set_pss(int n, ...)
+        void set_pss2(int n, ...)
         c_H1Space *get_space(int n)
         c_PrecalcShapeset *get_pss(int n)
         void copy(c_LinSystem *sys)
         void assemble()
         int solve(int n, ...)
+        int solve2(int n, ...)        
         void save_matrix_matlab(char *filename, char *varname)
         void get_matrix(int *Ap, int *Ai, scalar *Ax, int size)
         void get_rhs(scalar *RHS, int size)
-    c_LinSystem *new_LinSystem "new LinSystem" (c_WeakForm *wf)
+    c_LinSystem *new_LinSystem "new LinSystem" (c_WeakForm *wf,
+            c_CommonSolver *solver)
 
     cdef struct c_RefSystem "RefSystem":
         void assemble()
@@ -334,17 +339,19 @@ cdef extern from "hermes2d.h":
         void set_solutions(c_SolutionTuple, c_SolutionTuple)
         double calc_error(int)
         void set_biform(int i, int j, ...)
-        int adapt(c_ProjBasedSelector*, double, int, int, int, double)
+        int adapt(c_ProjBasedSelector*, double, int, int, double)
 
     ctypedef struct c_H1Adapt "H1Adapt":
         pass
 
-    c_H1Adapt *new_H1Adapt "new H1Adapt" (c_H1SpaceTuple)
+     #c_H1Adapt *new_H1Adapt "new H1Adapt" (c_H1SpaceTuple)
+    c_H1Adapt *new_H1Adapt "new H1Adapt" (c_LinSystem*)
 
     ctypedef struct c_L2Adapt "L2Adapt":
         pass
 
-    c_L2Adapt *new_L2Adapt "new L2Adapt" (c_L2SpaceTuple)
+    #c_L2Adapt *new_L2Adapt "new L2Adapt" (c_L2SpaceTuple)
+    c_L2Adapt *new_L2Adapt "new L2Adapt" (c_LinSystem*)
 
     cdef struct c_Linearizer "Linearizer":
         void process_solution(c_MeshFunction* sln, ...)
@@ -463,10 +470,10 @@ cdef class LinSystem:
 cdef class RefSystem(LinSystem):
     pass
 
-cdef class Solver:
-    cdef c_Solver *thisptr
+cdef class CommonSolver:
+    cdef c_CommonSolver *thisptr
 
-cdef class DummySolver(Solver):
+cdef class DummySolver(CommonSolver):
     pass
 
 cdef class WeakForm:

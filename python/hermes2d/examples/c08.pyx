@@ -47,11 +47,11 @@ cdef c_Ord _order_lf(int n, double *wt, FuncOrd *u, GeomOrd *e, ExtDataOrd *ext)
     return int_v_ord(n, wt, u).mul_double(f_1)
 
 def set_forms(WeakForm dp):
-    dp.thisptr.add_biform(0, 0, &bilinear_form_0_0, &_order_bf, H2D_SYM)
-    dp.thisptr.add_biform(0, 1, &bilinear_form_0_1, &_order_bf, H2D_SYM)
-    dp.thisptr.add_biform(1, 1, &bilinear_form_1_1, &_order_bf, H2D_SYM)
-    dp.thisptr.add_liform_surf(0, &linear_form_surf_0, &_order_lf);
-    dp.thisptr.add_liform_surf(1, &linear_form_surf_1, &_order_lf);
+    dp.thisptr.add_matrix_form(0, 0, &bilinear_form_0_0, &_order_bf, H2D_SYM)
+    dp.thisptr.add_matrix_form(0, 1, &bilinear_form_0_1, &_order_bf, H2D_SYM)
+    dp.thisptr.add_matrix_form(1, 1, &bilinear_form_1_1, &_order_bf, H2D_SYM)
+    dp.thisptr.add_vector_form_surf(0, &linear_form_surf_0, &_order_lf);
+    dp.thisptr.add_vector_form_surf(1, &linear_form_surf_1, &_order_lf);
 
 def set_bc(H1Space xdisp, H1Space ydisp):
     xdisp.thisptr.set_bc_types(&bc_type)

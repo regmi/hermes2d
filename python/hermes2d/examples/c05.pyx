@@ -27,7 +27,7 @@ cdef scalar linear_form_surf_05(int n, double *wt, FuncReal *u, GeomReal
     return CONST_GAMMA[e.marker-1] * int_v(n, wt, u)
 
 def set_forms(WeakForm dp):
-    dp.thisptr.add_liform_surf(0, &linear_form_surf_05, &_order_lf);
+    dp.thisptr.add_vector_form_surf(0, &linear_form_surf_05, &_order_lf);
 
 def set_bc(H1Space space):
     space.thisptr.set_bc_types(&bc_type_05)

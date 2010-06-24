@@ -847,8 +847,10 @@ cdef class PrecalcShapeset:
 
 cdef class H1Space:
 
-    def __init__(self, Mesh m):
-        self.thisptr = new_H1Space(m.thisptr)
+    def __init__(self, Mesh m):# = None, c_BCType bt = None, scalar s = None, p_init
+	    #   = 1, H1Shapeset h = None ):s
+        self.thisptr = new_H1Space(m.thisptr)#, bt, s, p_init,
+	#	h.thisptr )
 
     def __dealloc__(self):
         delete(self.thisptr)
@@ -1111,10 +1113,10 @@ cdef class WeakForm:
     def __dealloc__(self):
         delete(self.thisptr)
 
-cdef class DummySolver(Solver):
+cdef class DummySolver(CommonSolver):
 
     def __cinit__(self):
-        self.thisptr = <c_Solver *>(new_DummySolver())
+        self.thisptr = <c_CommonSolver *>(new_DummySolver())
 
     def __dealloc__(self):
         delete(self.thisptr)
@@ -1123,12 +1125,15 @@ cdef class LinSystem:
 
     def __init__(self, WeakForm wf):
         self.thisptr = new_LinSystem(wf.thisptr)
+    def __init__(self, WeakForm wf, CommonSolver solver):
+        self.thisptr = new_LinSystem(wf.thisptr, solver.thisptr)
 
     #def __dealloc__(self):
     #    delete(self.thisptr)
 
     def set_spaces(self, *args):
-        self._spaces = args
+        """
+	self._spaces = args
         cdef int n = len(args)
         cdef H1Space a, b, c, d
         if n == 1:
@@ -1146,8 +1151,31 @@ cdef class LinSystem:
                     d.thisptr)
         else:
             raise NotImplementedError()
+        """
+        pass
+
+    def set_spaces2(self, *args):
+        self._spaces = args
+        cdef int n = len(args)
+        cdef H1Space a, b, c, d
+        if n == 1:
+            a = args[0]
+            self.thisptr.set_spaces2(n, a.thisptr)
+        elif n == 2:
+            a, b = args
+            self.thisptr.set_spaces2(n, a.thisptr, b.thisptr)
+        elif n == 3:
+            a, b, c = args
+            self.thisptr.set_spaces2(n, a.thisptr, b.thisptr, c.thisptr)
+        elif n == 4:
+            a, b, c, d = args
+            self.thisptr.set_spaces2(n, a.thisptr, b.thisptr, c.thisptr,
+                    d.thisptr)
+        else:
+            raise NotImplementedError()
 
     def set_pss(self, *args):
+        """
         self._pss = args
         cdef int n = len(args)
         cdef PrecalcShapeset s1, s2, s3, s4
@@ -1166,6 +1194,29 @@ cdef class LinSystem:
                     s4.thisptr)
         else:
             raise NotImplementedError()
+        """
+        pass
+        
+    def set_pss2(self, *args):
+        self._pss = args
+        cdef int n = len(args)
+        cdef PrecalcShapeset s1, s2, s3, s4
+        if n == 1:
+            s1, = args
+            self.thisptr.set_pss2(n, s1.thisptr)
+        elif n == 2:
+            s1, s2 = args
+            self.thisptr.set_pss2(n, s1.thisptr, s2.thisptr)
+        elif n == 3:
+            s1, s2, s3 = args
+            self.thisptr.set_pss2(n, s1.thisptr, s2.thisptr, s3.thisptr)
+        elif n == 4:
+            s1, s2, s3, s4 = args
+            self.thisptr.set_pss2(n, s1.thisptr, s2.thisptr, s3.thisptr,
+                    s4.thisptr)
+        else:
+            raise NotImplementedError()
+
 
     def solve_system(self, *args, lib="scipy"):
         """
@@ -1176,8 +1227,10 @@ cdef class LinSystem:
         cdef Solution s0, s1, s2, s3
         cdef ndarray vec
         cdef scalar *pvec
-
+		
+        """
         if lib == "hermes":
+
             if n == 1:
                 s0 = args[0]
                 self.thisptr.solve(n, s0.thisptr)
@@ -1193,7 +1246,26 @@ cdef class LinSystem:
                         s3.thisptr)
             else:
                 raise NotImplementedError()
+        """
+        
+        if lib == "hermes":
 
+            if n == 1:
+                s0 = args[0]
+                self.thisptr.solve2(n, s0.thisptr)
+            elif n == 2:
+                s0, s1 = args
+                self.thisptr.solve2(n, s0.thisptr, s1.thisptr)
+            elif n == 3:
+                s0, s1, s2 = args
+                self.thisptr.solve2(n, s0.thisptr, s1.thisptr, s2.thisptr)
+            elif n == 4:
+                s0, s1, s2, s3 = args
+                self.thisptr.solve2(n, s0.thisptr, s1.thisptr, s2.thisptr,
+                        s3.thisptr)
+            else:
+                raise NotImplementedError()
+                          
         elif lib == "scipy":
             import warnings
             from scipy.sparse.linalg import cg
@@ -1538,7 +1610,7 @@ cdef class Adapt:
 	"""
         return self.thisptr.calc_error(error_flags)
 
-    def adapt(self, ProjBasedSelector selector, double thr, int strat = 0, int regularize = -1, int same_orders = 0, double to_be_processed = 0.0):
+    def adapt(self, ProjBasedSelector selector, double thr, int strat = 0, int regularize = -1, double to_be_processed = 0.0):
         """ Does adaptive refinement based on errors of elements.
 	    Refinements are selected using a supplied selector.
 
@@ -1556,8 +1628,8 @@ cdef class Adapt:
 	    - ```regularize``` specifies mesh regularization. Default value is `-1`.
 	    - ```same_orders``` specifies whether all element should have the same order. Default is `False`.
 	    - ```to_be_procesed``` specifies an error to process. Used by strategy 3. Default is `0.0`.
-	"""
-        return self.thisptr.adapt(selector.thisptr, thr, strat, regularize, same_orders, to_be_processed)
+	    """
+        return self.thisptr.adapt(selector.thisptr, thr, strat, regularize, to_be_processed)
 
 cdef class H1Adapt(Adapt):
     """ Adaptivity class for H1 space.
@@ -1568,12 +1640,17 @@ cdef class H1Adapt(Adapt):
 	- single component: ```hp = H1Adapt([h1_space1])```
 	- multiple components: ```hp = H1Adapt([h1_space1, h1_space2])```
     """
+    """
     def __cinit__(self, space_list):
         cdef c_H1SpaceTuple spaces
         for i in range(len(space_list)):
             spaces.push_back((<H1Space>(space_list[i])).thisptr)
         self.thisptr = <c_Adapt*>(new_H1Adapt(spaces))
-
+    """
+    
+    def __cinit__(self, LinSystem ls):
+        self.thisptr = <c_Adapt*>(new_H1Adapt(ls.thisptr))
+            
 cdef class L2Adapt(Adapt):
     """ Adaptivity class for L2 space.
         For details on class members, see the parent class Adapt.
@@ -1583,11 +1660,15 @@ cdef class L2Adapt(Adapt):
 	- single component: ```hp = L2Adapt([l2_space1])```
 	- multiple components: ```hp = L2Adapt([l2_space1, l2_space2])```
     """
+    """
     def __cinit__(self, space_list):
         cdef c_L2SpaceTuple spaces
         for i in range(len(space_list)):
             spaces.push_back((<L2Space>(space_list[i])).thisptr)
         self.thisptr = <c_Adapt*>(new_L2Adapt(spaces))
+    """
+    def __cinit__(self, LinSystem ls):
+        self.thisptr = <c_Adapt*>(new_L2Adapt(ls.thisptr))    
 
 cdef class Linearizer:
     """
