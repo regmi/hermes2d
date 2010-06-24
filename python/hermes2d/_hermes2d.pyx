@@ -888,7 +888,8 @@ cdef class LinSystem:
     #    delete(self.thisptr)
 
     def set_spaces(self, *args):
-        self._spaces = args
+        """
+	self._spaces = args
         cdef int n = len(args)
         cdef H1Space a, b, c, d
         if n == 1:
@@ -906,8 +907,11 @@ cdef class LinSystem:
                     d.thisptr)
         else:
             raise NotImplementedError()
+        """
+        pass
 
     def set_pss(self, *args):
+        """
         self._pss = args
         cdef int n = len(args)
         cdef PrecalcShapeset s1, s2, s3, s4
@@ -926,6 +930,8 @@ cdef class LinSystem:
                     s4.thisptr)
         else:
             raise NotImplementedError()
+        """
+        pass
 
     def solve_system(self, *args, lib="scipy"):
         """
@@ -938,6 +944,7 @@ cdef class LinSystem:
         cdef scalar *pvec
 
         if lib == "hermes":
+            """	    
             if n == 1:
                 s0 = args[0]
                 self.thisptr.solve(n, s0.thisptr)
@@ -953,6 +960,8 @@ cdef class LinSystem:
                         s3.thisptr)
             else:
                 raise NotImplementedError()
+            """
+            pass
 
         elif lib == "scipy":
             import warnings
@@ -1317,7 +1326,8 @@ cdef class Adapt:
 	    - ```same_orders``` specifies whether all element should have the same order. Default is `False`.
 	    - ```to_be_procesed``` specifies an error to process. Used by strategy 3. Default is `0.0`.
 	"""
-        return self.thisptr.adapt(selector.thisptr, thr, strat, regularize, same_orders, to_be_processed)
+	#return self.thisptr.adapt(selector.thisptr, thr, strat, regularize, same_orders, to_be_processed)
+        pass
 
 cdef class H1Adapt(Adapt):
     """ Adaptivity class for H1 space.
@@ -1332,7 +1342,7 @@ cdef class H1Adapt(Adapt):
         cdef c_H1SpaceTuple spaces
         for i in range(len(space_list)):
             spaces.push_back((<H1Space>(space_list[i])).thisptr)
-        self.thisptr = <c_Adapt*>(new_H1Adapt(spaces))
+	#self.thisptr = <c_Adapt*>(new_H1Adapt(spaces))
 
 cdef class L2Adapt(Adapt):
     """ Adaptivity class for L2 space.
@@ -1347,7 +1357,7 @@ cdef class L2Adapt(Adapt):
         cdef c_L2SpaceTuple spaces
         for i in range(len(space_list)):
             spaces.push_back((<L2Space>(space_list[i])).thisptr)
-        self.thisptr = <c_Adapt*>(new_L2Adapt(spaces))
+	#self.thisptr = <c_Adapt*>(new_L2Adapt(spaces))
 
 cdef class Linearizer:
     """

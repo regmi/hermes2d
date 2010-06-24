@@ -73,5 +73,5 @@ def set_forms(WeakForm wf, Solution s):
     wf.thisptr.add_matrix_form(0, 0, &bilinear_form, &bilinear_form_ord)
     wf.thisptr.add_matrix_form_surf(0, 0, &bilinear_form_surf, &bilinear_form_surf_ord, marker_air)
 
-    wf.thisptr.add_vector_form(0, &linear_form, &linear_form_ord, H2D_ANY, 1, s.thisptr)
+    #wf.thisptr.add_vector_form(0, &linear_form, &linear_form_ord, H2D_ANY, 1, s.thisptr)
     wf.thisptr.add_vector_form_surf(0, &linear_form_surf, &linear_form_surf_ord, marker_air)
