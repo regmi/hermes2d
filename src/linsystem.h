@@ -67,6 +67,7 @@ public:
   void init_spaces(Tuple<Space*> spaces);
   void init_space(Space* s);         // single equation case
   void set_spaces(Tuple<Space*> spaces);
+  void set_spaces2(int n, ...);  
   void set_pss(Tuple<PrecalcShapeset*> pss);
   void set_pss(PrecalcShapeset* p);  // single equation case
   void copy(LinSystem* sys);

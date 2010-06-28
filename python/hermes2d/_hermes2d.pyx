@@ -793,8 +793,10 @@ cdef class PrecalcShapeset:
 
 cdef class H1Space:
 
-    def __init__(self, Mesh m):
-        self.thisptr = new_H1Space(m.thisptr)
+    def __init__(self, Mesh m):# = None, c_BCType bt = None, scalar s = None, p_init
+	    #   = 1, H1Shapeset h = None ):s
+        self.thisptr = new_H1Space(m.thisptr)#, bt, s, p_init,
+	#	h.thisptr )
 
     def __dealloc__(self):
         delete(self.thisptr)
@@ -1097,6 +1099,26 @@ cdef class LinSystem:
             raise NotImplementedError()
         """
         pass
+
+    def set_spaces2(self, *args):
+        self._spaces = args
+        cdef int n = len(args)
+        cdef H1Space a, b, c, d
+        if n == 1:
+            a = args[0]
+            self.thisptr.set_spaces2(n, a.thisptr)
+        elif n == 2:
+            a, b = args
+            self.thisptr.set_spaces2(n, a.thisptr, b.thisptr)
+        elif n == 3:
+            a, b, c = args
+            self.thisptr.set_spaces2(n, a.thisptr, b.thisptr, c.thisptr)
+        elif n == 4:
+            a, b, c, d = args
+            self.thisptr.set_spaces2(n, a.thisptr, b.thisptr, c.thisptr,
+                    d.thisptr)
+        else:
+            raise NotImplementedError()
 
     def set_pss(self, *args):
         """
