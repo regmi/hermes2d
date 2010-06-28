@@ -174,7 +174,8 @@ cdef extern from "hermes2d.h":
         void set_essential_bc_values(scalar (*bc_value_callback_by_coord)(int ess_bdy_marker,
             double x, double y))
         void set_essential_bc_values_edge "set_essential_bc_values"(scalar (*bc_value_callback_by_edge)(EdgePos *ep))
-    c_H1Space *new_H1Space "new H1Space" (c_Mesh *m)
+    c_H1Space *new_H1Space "new H1Space" (c_Mesh *m) #c_BCType bt, scalar s,
+	    #int p_init, c_H1Shapeset *h )
 
     cdef struct c_L2Space "L2Space":
         void set_uniform_order(int tri_order)
@@ -272,6 +273,7 @@ cdef extern from "hermes2d.h":
 
     cdef struct c_LinSystem "LinSystem":
         void set_spaces()
+        void set_spaces2(int n, ...)
         void set_pss(int n, ...)
         c_H1Space *get_space(int n)
         c_PrecalcShapeset *get_pss(int n)
