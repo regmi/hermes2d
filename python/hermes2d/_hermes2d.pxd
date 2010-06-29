@@ -272,14 +272,16 @@ cdef extern from "hermes2d.h":
         pass
 
     cdef struct c_LinSystem "LinSystem":
-        void set_spaces()
+        void set_spaces(int n, ...)
         void set_spaces2(int n, ...)
         void set_pss(int n, ...)
+        void set_pss2(int n, ...)
         c_H1Space *get_space(int n)
         c_PrecalcShapeset *get_pss(int n)
         void copy(c_LinSystem *sys)
         void assemble()
         int solve(int n, ...)
+        int solve2(int n, ...)        
         void save_matrix_matlab(char *filename, char *varname)
         void get_matrix(int *Ap, int *Ai, scalar *Ax, int size)
         void get_rhs(scalar *RHS, int size)

@@ -1196,6 +1196,27 @@ cdef class LinSystem:
             raise NotImplementedError()
         """
         pass
+        
+    def set_pss2(self, *args):
+        self._pss = args
+        cdef int n = len(args)
+        cdef PrecalcShapeset s1, s2, s3, s4
+        if n == 1:
+            s1, = args
+            self.thisptr.set_pss2(n, s1.thisptr)
+        elif n == 2:
+            s1, s2 = args
+            self.thisptr.set_pss2(n, s1.thisptr, s2.thisptr)
+        elif n == 3:
+            s1, s2, s3 = args
+            self.thisptr.set_pss2(n, s1.thisptr, s2.thisptr, s3.thisptr)
+        elif n == 4:
+            s1, s2, s3, s4 = args
+            self.thisptr.set_pss2(n, s1.thisptr, s2.thisptr, s3.thisptr,
+                    s4.thisptr)
+        else:
+            raise NotImplementedError()
+
 
     def solve_system(self, *args, lib="scipy"):
         """
@@ -1206,9 +1227,10 @@ cdef class LinSystem:
         cdef Solution s0, s1, s2, s3
         cdef ndarray vec
         cdef scalar *pvec
-
+		
+        """
         if lib == "hermes":
-            """	    
+
             if n == 1:
                 s0 = args[0]
                 self.thisptr.solve(n, s0.thisptr)
@@ -1224,9 +1246,26 @@ cdef class LinSystem:
                         s3.thisptr)
             else:
                 raise NotImplementedError()
-            """
-            pass
+        """
+        
+        if lib == "hermes":
 
+            if n == 1:
+                s0 = args[0]
+                self.thisptr.solve2(n, s0.thisptr)
+            elif n == 2:
+                s0, s1 = args
+                self.thisptr.solve2(n, s0.thisptr, s1.thisptr)
+            elif n == 3:
+                s0, s1, s2 = args
+                self.thisptr.solve2(n, s0.thisptr, s1.thisptr, s2.thisptr)
+            elif n == 4:
+                s0, s1, s2, s3 = args
+                self.thisptr.solve2(n, s0.thisptr, s1.thisptr, s2.thisptr,
+                        s3.thisptr)
+            else:
+                raise NotImplementedError()
+                          
         elif lib == "scipy":
             import warnings
             from scipy.sparse.linalg import cg
