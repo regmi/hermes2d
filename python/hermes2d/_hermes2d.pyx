@@ -1610,7 +1610,7 @@ cdef class Adapt:
 	"""
         return self.thisptr.calc_error(error_flags)
 
-    def adapt(self, ProjBasedSelector selector, double thr, int strat = 0, int regularize = -1, int same_orders = 0, double to_be_processed = 0.0):
+    def adapt(self, ProjBasedSelector selector, double thr, int strat = 0, int regularize = -1, double to_be_processed = 0.0):
         """ Does adaptive refinement based on errors of elements.
 	    Refinements are selected using a supplied selector.
 
@@ -1628,9 +1628,8 @@ cdef class Adapt:
 	    - ```regularize``` specifies mesh regularization. Default value is `-1`.
 	    - ```same_orders``` specifies whether all element should have the same order. Default is `False`.
 	    - ```to_be_procesed``` specifies an error to process. Used by strategy 3. Default is `0.0`.
-	"""
-	#return self.thisptr.adapt(selector.thisptr, thr, strat, regularize, same_orders, to_be_processed)
-        pass
+	    """
+        return self.thisptr.adapt(selector.thisptr, thr, strat, regularize, to_be_processed)
 
 cdef class H1Adapt(Adapt):
     """ Adaptivity class for H1 space.
@@ -1641,12 +1640,17 @@ cdef class H1Adapt(Adapt):
 	- single component: ```hp = H1Adapt([h1_space1])```
 	- multiple components: ```hp = H1Adapt([h1_space1, h1_space2])```
     """
+    """
     def __cinit__(self, space_list):
         cdef c_H1SpaceTuple spaces
         for i in range(len(space_list)):
             spaces.push_back((<H1Space>(space_list[i])).thisptr)
-	#self.thisptr = <c_Adapt*>(new_H1Adapt(spaces))
-
+        self.thisptr = <c_Adapt*>(new_H1Adapt(spaces))
+    """
+    
+    def __cinit__(self, LinSystem ls):
+        self.thisptr = <c_Adapt*>(new_H1Adapt(ls.thisptr))
+            
 cdef class L2Adapt(Adapt):
     """ Adaptivity class for L2 space.
         For details on class members, see the parent class Adapt.
@@ -1656,11 +1660,15 @@ cdef class L2Adapt(Adapt):
 	- single component: ```hp = L2Adapt([l2_space1])```
 	- multiple components: ```hp = L2Adapt([l2_space1, l2_space2])```
     """
+    """
     def __cinit__(self, space_list):
         cdef c_L2SpaceTuple spaces
         for i in range(len(space_list)):
             spaces.push_back((<L2Space>(space_list[i])).thisptr)
-	#self.thisptr = <c_Adapt*>(new_L2Adapt(spaces))
+        self.thisptr = <c_Adapt*>(new_L2Adapt(spaces))
+    """
+    def __cinit__(self, LinSystem ls):
+        self.thisptr = <c_Adapt*>(new_L2Adapt(ls.thisptr))    
 
 cdef class Linearizer:
     """

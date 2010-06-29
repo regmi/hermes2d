@@ -339,17 +339,19 @@ cdef extern from "hermes2d.h":
         void set_solutions(c_SolutionTuple, c_SolutionTuple)
         double calc_error(int)
         void set_biform(int i, int j, ...)
-        int adapt(c_ProjBasedSelector*, double, int, int, int, double)
+        int adapt(c_ProjBasedSelector*, double, int, int, double)
 
     ctypedef struct c_H1Adapt "H1Adapt":
         pass
 
-    c_H1Adapt *new_H1Adapt "new H1Adapt" (c_H1SpaceTuple)
+     #c_H1Adapt *new_H1Adapt "new H1Adapt" (c_H1SpaceTuple)
+    c_H1Adapt *new_H1Adapt "new H1Adapt" (c_LinSystem*)
 
     ctypedef struct c_L2Adapt "L2Adapt":
         pass
 
-    c_L2Adapt *new_L2Adapt "new L2Adapt" (c_L2SpaceTuple)
+    #c_L2Adapt *new_L2Adapt "new L2Adapt" (c_L2SpaceTuple)
+    c_L2Adapt *new_L2Adapt "new L2Adapt" (c_LinSystem*)
 
     cdef struct c_Linearizer "Linearizer":
         void process_solution(c_MeshFunction* sln, ...)
