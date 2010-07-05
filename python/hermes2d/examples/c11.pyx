@@ -32,29 +32,29 @@ def set_bc(H1Space space):
     space.thisptr.set_essential_bc_values(&essential_bc_values)
 
 
-cdef scalar bilinear_form_0_0(int n, double *wt, FuncReal *u, FuncReal *v, GeomReal *e, ExtDataReal *ext):
+cdef scalar bilinear_form_0_0(int n, double *wt, FuncReal **t, FuncReal *u, FuncReal *v, GeomReal *e, ExtDataReal *ext):
     return (lamda + 2*mu) * int_dudx_dvdx(n, wt, u, v) + mu * int_dudy_dvdy(n, wt, u, v)
 
 
-cdef scalar bilinear_form_0_1(int n, double *wt, FuncReal *u, FuncReal *v, GeomReal *e, ExtDataReal *ext):
+cdef scalar bilinear_form_0_1(int n, double *wt, FuncReal **t, FuncReal *u, FuncReal *v, GeomReal *e, ExtDataReal *ext):
     return lamda * int_dudy_dvdx(n, wt, u, v) + mu * int_dudx_dvdy(n, wt, u, v)
 
 
-cdef scalar bilinear_form_1_0(int n, double *wt, FuncReal *u, FuncReal *v, GeomReal *e, ExtDataReal *ext):
+cdef scalar bilinear_form_1_0(int n, double *wt, FuncReal **t, FuncReal *u, FuncReal *v, GeomReal *e, ExtDataReal *ext):
     return mu * int_dudy_dvdx(n, wt, u, v) + lamda * int_dudx_dvdy(n, wt, u, v)
 
 
-cdef scalar bilinear_form_1_1(int n, double *wt, FuncReal *u, FuncReal *v, GeomReal *e, ExtDataReal *ext):
+cdef scalar bilinear_form_1_1(int n, double *wt, FuncReal **t, FuncReal *u, FuncReal *v, GeomReal *e, ExtDataReal *ext):
     return mu * int_dudx_dvdx(n, wt, u, v) + (lamda + 2*mu) * int_dudy_dvdy(n, wt, u, v)
 
 
-cdef scalar linear_form_surf_1(int n, double *wt, FuncReal *v, GeomReal *e, ExtDataReal *ext):
+cdef scalar linear_form_surf_1(int n, double *wt, FuncReal **t, FuncReal *v, GeomReal *e, ExtDataReal *ext):
     return -f * int_v(n, wt, v)
 
-cdef c_Ord _order_bf(int n, double *wt, FuncOrd *u, FuncOrd *v, GeomOrd *e, ExtDataOrd *ext):
+cdef c_Ord _order_bf(int n, double *wt, FuncOrd **t, FuncOrd *u, FuncOrd *v, GeomOrd *e, ExtDataOrd *ext):
     return create_Ord(20)
 
-cdef c_Ord _order_lf(int n, double *wt, FuncOrd *u, GeomOrd *e, ExtDataOrd *ext):
+cdef c_Ord _order_lf(int n, double *wt, FuncOrd **t, FuncOrd *u, GeomOrd *e, ExtDataOrd *ext):
     #return int_v_ord(n, wt, u).mul_double(-f)
     return create_Ord(20)
 
@@ -66,7 +66,7 @@ def set_wf_forms(WeakForm wf):
 
 
 def set_hp_forms(Adapt hp):
-    hp.thisptr.set_biform(0, 0, &bilinear_form_0_0, &_order_bf)
-    hp.thisptr.set_biform(0, 1, &bilinear_form_0_1, &_order_bf)
-    hp.thisptr.set_biform(1, 0, &bilinear_form_1_0, &_order_bf)
-    hp.thisptr.set_biform(1, 1, &bilinear_form_1_1, &_order_bf)
+    hp.thisptr.set_error_form(0, 0, &bilinear_form_0_0, &_order_bf)
+    hp.thisptr.set_error_form(0, 1, &bilinear_form_0_1, &_order_bf)
+    hp.thisptr.set_error_form(1, 0, &bilinear_form_1_0, &_order_bf)
+    hp.thisptr.set_error_form(1, 1, &bilinear_form_1_1, &_order_bf)

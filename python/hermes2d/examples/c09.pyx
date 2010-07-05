@@ -37,35 +37,35 @@ def set_bc(H1Space space):
 def temp_ext(t):
     return T_INIT + 10. * math.sin(2*math.pi*t/FINAL_TIME);
 
-cdef scalar bilinear_form(int n, double *wt, FuncReal *u, FuncReal *v, GeomReal *e, ExtDataReal *ext):
+cdef scalar bilinear_form(int n, double *wt, FuncReal **t, FuncReal *u, FuncReal *v, GeomReal *e, ExtDataReal *ext):
     return HEATCAP * RHO * int_u_v(n, wt, u, v) / TAU + LAMBDA * int_grad_u_grad_v(n, wt, u, v)
 
-cdef c_Ord bilinear_form_ord(int n, double *wt, FuncOrd *u, FuncOrd *v, GeomOrd *e, ExtDataOrd *ext):
+cdef c_Ord bilinear_form_ord(int n, double *wt, FuncOrd **t, FuncOrd *u, FuncOrd *v, GeomOrd *e, ExtDataOrd *ext):
     #return create_Ord(20)
     return int_grad_u_grad_v_ord(n, wt, u, v)
 
-cdef scalar bilinear_form_surf(int n, double *wt, FuncReal *u, FuncReal *v, GeomReal *e, ExtDataReal *ext):
+cdef scalar bilinear_form_surf(int n, double *wt, FuncReal **t, FuncReal *u, FuncReal *v, GeomReal *e, ExtDataReal *ext):
     return LAMBDA * ALPHA * int_u_v(n, wt, u, v)
 
-cdef c_Ord bilinear_form_surf_ord(int n, double *wt, FuncOrd *u, FuncOrd *v, GeomOrd *e, ExtDataOrd *ext):
+cdef c_Ord bilinear_form_surf_ord(int n, double *wt, FuncOrd **t, FuncOrd *u, FuncOrd *v, GeomOrd *e, ExtDataOrd *ext):
     #return create_Ord(20)
     return int_u_v_ord(n, wt, u, v)
 
-cdef scalar linear_form(int n, double *wt, FuncReal *v, GeomReal *e, ExtDataReal *ext):
+cdef scalar linear_form(int n, double *wt, FuncReal **t, FuncReal *v, GeomReal *e, ExtDataReal *ext):
     return HEATCAP * RHO * int_u_v(n, wt, ext.fn[0], v) / TAU;
 
-cdef c_Ord linear_form_ord(int n, double *wt, FuncOrd *v, GeomOrd *e, ExtDataOrd *ext):
+cdef c_Ord linear_form_ord(int n, double *wt, FuncOrd **t, FuncOrd *v, GeomOrd *e, ExtDataOrd *ext):
     return create_Ord(20)
 #return int_v_ord(n, wt, v)
 
-cdef scalar linear_form_surf(int n, double *wt, FuncReal *v, GeomReal *e, ExtDataReal *ext):
+cdef scalar linear_form_surf(int n, double *wt, FuncReal **t, FuncReal *v, GeomReal *e, ExtDataReal *ext):
     return LAMBDA * ALPHA * temp_ext(TIME) * int_v(n, wt, v)
 
 def update_time(t):
     global TIME
     TIME = t
 
-cdef c_Ord linear_form_surf_ord(int n, double *wt, FuncOrd *v, GeomOrd *e, ExtDataOrd *ext):
+cdef c_Ord linear_form_surf_ord(int n, double *wt, FuncOrd **t, FuncOrd *v, GeomOrd *e, ExtDataOrd *ext):
     return create_Ord(20)
 #return int_v_ord(n, wt, v)
 
