@@ -72,7 +72,7 @@ cdef scalar linear_form(int n, double *wt, FuncReal **t, FuncReal *v, GeomReal *
     return int_F_v(n, wt, rhs, v, e)
 
 # Integration order for the volumetric linear form
-cdef c_Ord linear_form_ord(int n, double *wt, FuncReal **t, FuncOrd *v, GeomOrd *e, ExtDataOrd *ext):
+cdef c_Ord linear_form_ord(int n, double *wt, FuncOrd **t, FuncOrd *v, GeomOrd *e, ExtDataOrd *ext):
     #return v.val[0] * e.x[0] * e.x[0]
     return create_Ord(20)
 
