@@ -337,7 +337,7 @@ cdef extern from "hermes2d.h":
     ctypedef struct c_Adapt "Adapt":
         void set_solutions(c_SolutionTuple, c_SolutionTuple)
         double calc_error(int)
-        void set_biform(int i, int j, ...)
+        void set_error_form(int i, int j, ...)
         int adapt(c_ProjBasedSelector*, double, int, int, double)
 
     ctypedef struct c_H1Adapt "H1Adapt":

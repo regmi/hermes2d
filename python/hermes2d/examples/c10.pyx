@@ -22,13 +22,13 @@ def set_bc(H1Space space):
     space.thisptr.set_essential_bc_values(&essential_bc_values)
 
 
-cdef scalar biform1(int n, double *wt, FuncReal *u, FuncReal *v, GeomReal *e, ExtDataReal *ext):
+cdef scalar biform1(int n, double *wt, FuncReal **t, FuncReal *u, FuncReal *v, GeomReal *e, ExtDataReal *ext):
     return EPS1 * int_grad_u_grad_v(n, wt, u, v)
 
-cdef scalar biform2(int n, double *wt, FuncReal *u, FuncReal *v, GeomReal *e, ExtDataReal *ext):
+cdef scalar biform2(int n, double *wt, FuncReal **t, FuncReal *u, FuncReal *v, GeomReal *e, ExtDataReal *ext):
     return EPS2 * int_grad_u_grad_v(n, wt, u, v);
 
-cdef c_Ord _order_bf(int n, double *wt, FuncOrd *u, FuncOrd *v, GeomOrd *e, ExtDataOrd *ext):
+cdef c_Ord _order_bf(int n, double *wt, FuncOrd **t, FuncOrd *u, FuncOrd *v, GeomOrd *e, ExtDataOrd *ext):
     return create_Ord(20)
 
 

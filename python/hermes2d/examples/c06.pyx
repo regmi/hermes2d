@@ -16,31 +16,31 @@ cdef scalar essential_bc_values(int ess_bdy_marker, double x, double y):
         return 100.
     return 0.
 
-cdef scalar bilinear_form(int n, double *wt, FuncReal *u, FuncReal *v, GeomReal
+cdef scalar bilinear_form(int n, double *wt, FuncReal **t, FuncReal *u, FuncReal *v, GeomReal
         *e, ExtDataReal *ext):
     return int_grad_u_grad_v(n, wt, u, v)
 
-cdef scalar bilinear_form_surf_06(int n, double *wt, FuncReal *u, FuncReal *v,
+cdef scalar bilinear_form_surf_06(int n, double *wt, FuncReal **t, FuncReal *u, FuncReal *v,
         GeomReal *e, ExtDataReal *ext):
     if e.marker != 1:
         return 0.
     return int_u_v(n, wt, u, v)
 
-cdef scalar linear_form_surf_06(int n, double *wt, FuncReal *v, GeomReal *e,
+cdef scalar linear_form_surf_06(int n, double *wt, FuncReal **t, FuncReal *v, GeomReal *e,
         ExtDataReal *ext):
     if e.marker != 1:
         return 0.
     return 20. * int_v(n, wt, v)
 
-cdef c_Ord _order_bf(int n, double *wt, FuncOrd *u, FuncOrd *v, GeomOrd
+cdef c_Ord _order_bf(int n, double *wt, FuncOrd **t, FuncOrd *u, FuncOrd *v, GeomOrd
         *e, ExtDataOrd *ext):
     return int_grad_u_grad_v_ord(n, wt, u, v)
 
-cdef c_Ord _order_bf_surf_06(int n, double *wt, FuncOrd *u, FuncOrd *v,
+cdef c_Ord _order_bf_surf_06(int n, double *wt, FuncOrd **t, FuncOrd *u, FuncOrd *v,
         GeomOrd *e, ExtDataOrd *ext):
     return int_u_v_ord(n, wt, u, v)
 
-cdef c_Ord _order_lf(int n, double *wt, FuncOrd *u, GeomOrd
+cdef c_Ord _order_lf(int n, double *wt, FuncOrd **t, FuncOrd *u, GeomOrd
         *e, ExtDataOrd *ext):
     return int_v_ord(n, wt, u)
 

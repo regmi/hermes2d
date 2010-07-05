@@ -22,28 +22,28 @@ cdef scalar essential_bc_values(int ess_bdy_marker, double x, double y):
     return 0.0
 
 # Bilinear forms
-cdef scalar bilinear_form_0_0(int n, double *wt, FuncReal *u, FuncReal *v, GeomReal *e, ExtDataReal *ext):
+cdef scalar bilinear_form_0_0(int n, double *wt, FuncReal **t, FuncReal *u, FuncReal *v, GeomReal *e, ExtDataReal *ext):
     return (l +2*mu) * int_dudx_dvdx(n, wt, u, v) + mu * int_dudy_dvdy(n, wt, u, v)
 
-cdef scalar bilinear_form_0_1(int n, double *wt, FuncReal *u, FuncReal *v, GeomReal *e, ExtDataReal *ext):
+cdef scalar bilinear_form_0_1(int n, double *wt, FuncReal **t, FuncReal *u, FuncReal *v, GeomReal *e, ExtDataReal *ext):
     return l * int_dudy_dvdx(n, wt, u, v) + mu * int_dudx_dvdy(n, wt, u, v)
 
-cdef scalar bilinear_form_1_1(int n, double *wt, FuncReal *u, FuncReal *v, GeomReal *e, ExtDataReal *ext):
+cdef scalar bilinear_form_1_1(int n, double *wt, FuncReal **t, FuncReal *u, FuncReal *v, GeomReal *e, ExtDataReal *ext):
     return mu * int_dudx_dvdx(n, wt, u, v) + (l + 2 * mu) * int_dudy_dvdy(n, wt, u, v)
 
 # Linear forms
-cdef scalar linear_form_surf_0(int n, double *wt, FuncReal *u, GeomReal *e, ExtDataReal *ext):
+cdef scalar linear_form_surf_0(int n, double *wt, FuncReal **t, FuncReal *u, GeomReal *e, ExtDataReal *ext):
     return f_0 * int_v(n, wt, u)
 
-cdef scalar linear_form_surf_1(int n, double *wt, FuncReal *u, GeomReal *e, ExtDataReal *ext):
+cdef scalar linear_form_surf_1(int n, double *wt, FuncReal **t, FuncReal *u, GeomReal *e, ExtDataReal *ext):
     return f_1 * int_v(n, wt, u)
 
-cdef c_Ord _order_bf(int n, double *wt, FuncOrd *u, FuncOrd *v, GeomOrd *e, ExtDataOrd *ext):
+cdef c_Ord _order_bf(int n, double *wt, FuncOrd **t, FuncOrd *u, FuncOrd *v, GeomOrd *e, ExtDataOrd *ext):
     # XXX: with 9 it doesn't shout about the integration order, but gives wrong
     # results...
     return create_Ord(20)
 
-cdef c_Ord _order_lf(int n, double *wt, FuncOrd *u, GeomOrd *e, ExtDataOrd *ext):
+cdef c_Ord _order_lf(int n, double *wt, FuncOrd **t, FuncOrd *u, GeomOrd *e, ExtDataOrd *ext):
     return int_v_ord(n, wt, u).mul_double(f_1)
 
 def set_forms(WeakForm dp):
