@@ -4,7 +4,7 @@ from hermes2d._hermes2d cimport scalar, FuncReal, GeomReal, WeakForm, \
 
 cdef scalar bilinear_form(int n, double *wt, FuncReal **t, FuncReal *u, FuncReal *v, GeomReal
         *e, ExtDataReal *ext):
-    return int_grad_u_grad_v(n, wt, t, u, v)
+    return int_grad_u_grad_v(n, wt, u, v)
 
 cdef c_Ord bilinear_form_ord(int n, double *wt, FuncOrd **t, FuncOrd *u, FuncOrd *v, GeomOrd
         *e, ExtDataOrd *ext):
@@ -13,19 +13,19 @@ cdef c_Ord bilinear_form_ord(int n, double *wt, FuncOrd **t, FuncOrd *u, FuncOrd
     #return int_grad_u_grad_v_ord(n, wt, u, v)
     return create_Ord(20)
 
-cdef scalar linear_form_p2(int n, double *wt, FuncReal *u, GeomReal
+cdef scalar linear_form_p2(int n, double *wt, FuncReal **t, FuncReal *u, GeomReal
         *e, ExtDataReal *ext):
     return 2*int_v(n, wt, u)
 
-cdef scalar linear_form_m1(int n, double *wt, FuncReal *u, GeomReal
+cdef scalar linear_form_m1(int n, double *wt, FuncReal **t, FuncReal *u, GeomReal
         *e, ExtDataReal *ext):
     return -int_v(n, wt, u)
 
-cdef scalar linear_form_m4(int n, double *wt, FuncReal *u, GeomReal
+cdef scalar linear_form_m4(int n, double *wt, FuncReal **t, FuncReal *u, GeomReal
         *e, ExtDataReal *ext):
     return -4*int_v(n, wt, u)
 
-cdef c_Ord _order_lf(int n, double *wt, FuncOrd *u, GeomOrd
+cdef c_Ord _order_lf(int n, double *wt, FuncOrd **t, FuncOrd *u, GeomOrd
         *e, ExtDataOrd *ext):
     return int_v_ord(n, wt, u)
 

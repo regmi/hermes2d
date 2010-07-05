@@ -18,11 +18,11 @@ cdef c_BCType bc_type_05(int marker):
 cdef scalar essential_bc_values(int marker, double x, double y):
     return 0.0
 
-cdef c_Ord _order_lf(int n, double *wt, FuncOrd *u, GeomOrd
+cdef c_Ord _order_lf(int n, double *wt, FuncOrd **t, FuncOrd *u, GeomOrd
         *e, ExtDataOrd *ext):
     return int_v_ord(n, wt, u).mul_double(CONST_GAMMA[e.marker-1])
 
-cdef scalar linear_form_surf_05(int n, double *wt, FuncReal *u, GeomReal
+cdef scalar linear_form_surf_05(int n, double *wt, FuncReal **t, FuncReal *u, GeomReal
         *e, ExtDataReal *ext):
     return CONST_GAMMA[e.marker-1] * int_v(n, wt, u)
 
