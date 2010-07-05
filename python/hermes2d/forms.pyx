@@ -2,11 +2,11 @@ from hermes2d._hermes2d cimport scalar, FuncReal, GeomReal, WeakForm, \
         int_grad_u_grad_v, int_grad_u_grad_v_ord, int_v, malloc, ExtDataReal, \
         c_Ord, create_Ord, FuncOrd, GeomOrd, ExtDataOrd, int_v_ord
 
-cdef scalar bilinear_form(int n, double *wt, FuncReal *u, FuncReal *v, GeomReal
+cdef scalar bilinear_form(int n, double *wt, FuncReal **t, FuncReal *u, FuncReal *v, GeomReal
         *e, ExtDataReal *ext):
-    return int_grad_u_grad_v(n, wt, u, v)
+    return int_grad_u_grad_v(n, wt, t, u, v)
 
-cdef c_Ord bilinear_form_ord(int n, double *wt, FuncOrd *u, FuncOrd *v, GeomOrd
+cdef c_Ord bilinear_form_ord(int n, double *wt, FuncOrd **t, FuncOrd *u, FuncOrd *v, GeomOrd
         *e, ExtDataOrd *ext):
     # surprisingly, uncommenting this makes it a lot slower:
     #print int_grad_u_grad_v_ord(n, wt, u, v).get_order(),
