@@ -382,9 +382,9 @@ cdef extern from "hermes2d.h":
     double h1_norm(c_MeshFunction* fu)
     double integrate(c_MeshFunction *sln)
     double int_grad_u_grad_v "int_grad_u_grad_v<double, double>"(int n,
-            double *wt, FuncReal **t, FuncReal *u, FuncReal *v)
+            double *wt, FuncReal *u, FuncReal *v)
     c_Ord int_grad_u_grad_v_ord "int_grad_u_grad_v<Ord, Ord>"(int n,
-            double *wt, FuncOrd **t, FuncOrd *u, FuncOrd *v)
+            double *wt, FuncOrd *u, FuncOrd *v)
     double int_x_grad_u_grad_v "int_x_grad_u_grad_v<double, double>"(int n,
             double *wt, FuncReal *u, FuncReal *v)
     double int_u_dvdx "int_u_dvdx<double, double>"(...)
@@ -396,8 +396,8 @@ cdef extern from "hermes2d.h":
     double int_F_u_v(...)
     double int_F_v "int_F_v<double, double>"(...)
     c_Ord int_F_v_ord "int_F_v<Ord, Ord>"(...)
-    double int_v "int_v<double, double>"(int n, double *wt, FuncReal **t, FuncReal *v)
-    c_Ord int_v_ord "int_v<Ord, Ord>"(int n, double *wt, FuncOrd **t, FuncOrd *v)
+    double int_v "int_v<double, double>"(int n, double *wt, FuncReal *v)
+    c_Ord int_v_ord "int_v<Ord, Ord>"(int n, double *wt, FuncOrd *v)
     double int_w_nabla_u_v "int_w_nabla_u_v<double, double>"(...)
     #double surf_int_G_v(RealFunction *fv, RefMap *rv, EdgePos *ep)
     #double surf_int_v(RealFunction *fv, RefMap *rv, EdgePos *ep)
