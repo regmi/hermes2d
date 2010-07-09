@@ -24,49 +24,44 @@ from hermes2d.examples.c03 import set_bc
 from hermes2d.examples import get_example_mesh
 
 P_INIT = 5                # Uniform polynomial degree of mesh elements.
+print 1
+# Problem parameters.
+CONST_F = 2.0
 
 # Load the mesh file
 mesh = Mesh()
 mesh.load(get_example_mesh())
 
 # Sample "manual" mesh refinement
-#mesh.refine_element(0)
-
-# Initialize the shapeset and the cache
-shapeset = H1Shapeset()
-pss = PrecalcShapeset(shapeset)
-
-# Create an H1 space
-space = H1Space(mesh, shapeset)
-space.set_uniform_order(P_INIT)
+mesh.refine_all_elements()
+print 2
+# Create an H1 space with default shapeset
+space = H1Space(mesh, P_INIT)
+print 3
 set_bc(space)
-space.assign_dofs()
-
+print 4
 # Initialize the weak formulation
 wf = WeakForm(1)
+print 5
 set_forms(wf)
+print 6
 
-# Initialize the linear system and solver
-solver = DummySolver()
-sys = LinSystem(wf, solver)
-sys.set_spaces(space)
-sys.set_pss(pss)
+# Initialize the linear system
+ls = LinSystem(wf, space)
+print 7
 
-# Assemble the stiffness matrix and solve the system
-#sys.assemble()
-#A = sys.get_matrix()
-#b = sys.get_rhs()
-#from scipy.sparse.linalg import cg
-#x, res = cg(A, b)
-#sln = Solution()
-#sln.set_fe_solution(space, pss, x)
-
+# Assemble and solve the matrix problem.
 sln = Solution()
-sys.assemble()
-sys.solve_system(sln)
+print 8
+ls.assemble()
+print 9
+ls.solve_system(sln)
+print 10
 
 # Visualize the solution
 sln.plot()
+print 11
 
 # Visualize the mesh
 mesh.plot(space=space)
+print 12

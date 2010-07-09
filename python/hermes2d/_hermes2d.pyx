@@ -848,7 +848,7 @@ cdef class PrecalcShapeset:
 cdef class H1Space:
 
     def __init__(self, Mesh m = None, p_init = 1, H1Shapeset h = None):
-        self.thisptr = new_H1Space(m.thisptr, NULL, NULL, p_init, h.thisptr)
+        self.thisptr = new_H1Space(m.thisptr, NULL, NULL, p_init, NULL)
 
     def __dealloc__(self):
         delete(self.thisptr)
@@ -1121,10 +1121,12 @@ cdef class DummySolver(CommonSolver):
 
 cdef class LinSystem:
 
-    def __init__(self, WeakForm wf):
-        self.thisptr = new_LinSystem(wf.thisptr)
-    def __init__(self, WeakForm wf, CommonSolver solver):
-        self.thisptr = new_LinSystem(wf.thisptr, solver.thisptr)
+   # def __init__(self, WeakForm wf):
+   #     self.thisptr = new_LinSystem(wf.thisptr)
+   # def __init__(self, WeakForm wf, CommonSolver solver):
+   #     self.thisptr = new_LinSystem(wf.thisptr, solver.thisptr)
+    def __init__(self, WeakForm wf, H1Space sp):
+        self.thisptr = new_LinSystem(wf.thisptr, sp.thisptr)
 
     #def __dealloc__(self):
     #    delete(self.thisptr)
