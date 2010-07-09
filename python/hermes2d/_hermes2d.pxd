@@ -284,9 +284,11 @@ cdef extern from "hermes2d.h":
         void save_matrix_matlab(char *filename, char *varname)
         void get_matrix(int *Ap, int *Ai, scalar *Ax, int size)
         void get_rhs(scalar *RHS, int size)
+    #c_LinSystem *new_LinSystem "new LinSystem" (c_WeakForm *wf,
+    #        c_CommonSolver *solver)
     c_LinSystem *new_LinSystem "new LinSystem" (c_WeakForm *wf,
-            c_CommonSolver *solver)
-
+            c_H1Space *sp)
+            
     cdef struct c_RefSystem "RefSystem":
         void assemble()
         c_H1Space *get_ref_space(int eq)
