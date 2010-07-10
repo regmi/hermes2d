@@ -54,6 +54,8 @@ cdef extern from "hermes2d.h":
     int c_H2D_FN_VAL_0 "H2D_FN_VAL_0"
     int c_H2D_FN_DX "H2D_FN_DX"
     int c_H2D_FN_DY "H2D_FN_DY"
+    int c_H2D_FN_DX_0 "H2D_FN_DX_0"
+    int c_H2D_FN_DY_0 "H2D_FN_DY_0"    
     int c_H2D_FN_DXX "H2D_FN_DXX"
     int c_H2D_FN_DYY "H2D_FN_DYY"
     int c_H2D_FN_DXY "H2D_FN_DXY"
@@ -200,7 +202,7 @@ cdef extern from "hermes2d.h":
 
     ctypedef struct FuncReal "Func<double>":
         double *val
-        double *dx, *dy	
+        double *dx, *dy 
     ctypedef struct GeomReal "Geom<double>":
         int marker
         double *x, *y
@@ -208,10 +210,10 @@ cdef extern from "hermes2d.h":
         FuncReal **fn
     ctypedef struct FuncOrd "Func<Ord>":
         c_Ord *val
-        c_Ord *dx, *dy	
+        c_Ord *dx, *dy  
     ctypedef struct GeomOrd "Geom<Ord>":
         int marker
-        c_Ord *x, *y	
+        c_Ord *x, *y    
     ctypedef struct ExtDataOrd "ExtData<Ord>":
         pass
 
@@ -286,8 +288,8 @@ cdef extern from "hermes2d.h":
         void get_rhs(scalar *RHS, int size)
     #c_LinSystem *new_LinSystem "new LinSystem" (c_WeakForm *wf,
     #        c_CommonSolver *solver)
-    c_LinSystem *new_LinSystem "new LinSystem" (c_WeakForm *wf,
-            c_H1Space *sp)
+    c_LinSystem *new_LinSystem "new LinSystem" (c_WeakForm *wf)#,
+          #  c_H1Space *sp)
             
     cdef struct c_RefSystem "RefSystem":
         void assemble()
@@ -333,7 +335,7 @@ cdef extern from "hermes2d.h":
 
     ctypedef struct c_L2ProjBasedSelector "RefinementSelectors::L2ProjBasedSelector":
         pass
-	    
+        
     c_L2ProjBasedSelector *new_L2ProjBasedSelector "new RefinementSelectors::L2ProjBasedSelector" (c_CandList, double, int, c_L2Shapeset*)
 
     ctypedef struct c_Adapt "Adapt":

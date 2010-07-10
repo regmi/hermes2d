@@ -16,14 +16,11 @@ cdef int marker_top = 2
 
 # Boundary condition types
 cdef c_BCType bc_types(int marker):
-    if marker == marker_left:
-        return <c_BCType>BC_ESSENTIAL
-    else:
-        return <c_BCType>BC_NATURAL
+    return <c_BCType>BC_NATURAL
 
 # function values for essential(Dirichlet) boundary markers
 # (if the return value is zero, this can be omitted)
-cdef scalar essential_bc_values(int ess_bdy__marker, double x, double y):
+cdef scalar essential_bc_values(int ess_bdy_marker, double x, double y):
     return 0
     
 

@@ -24,7 +24,7 @@ from hermes2d.examples.c03 import set_bc
 from hermes2d.examples import get_example_mesh
 
 P_INIT = 5                # Uniform polynomial degree of mesh elements.
-print 1
+
 # Problem parameters.
 CONST_F = 2.0
 
@@ -34,34 +34,26 @@ mesh.load(get_example_mesh())
 
 # Sample "manual" mesh refinement
 mesh.refine_all_elements()
-print 2
+
 # Create an H1 space with default shapeset
 space = H1Space(mesh, P_INIT)
-print 3
 set_bc(space)
-print 4
+
 # Initialize the weak formulation
 wf = WeakForm(1)
-print 5
 set_forms(wf)
-print 6
 
 # Initialize the linear system
-ls = LinSystem(wf, space)
-print 7
+ls = LinSystem(wf)
+ls.set_spaces(space)
 
 # Assemble and solve the matrix problem.
 sln = Solution()
-print 8
 ls.assemble()
-print 9
 ls.solve_system(sln)
-print 10
 
 # Visualize the solution
 sln.plot()
-print 11
 
 # Visualize the mesh
 mesh.plot(space=space)
-print 12
