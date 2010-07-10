@@ -11,6 +11,9 @@ cdef double mu = E / (2*(1 + nu))                    # external force in y-direc
 cdef double f_1 = 1e4                                # first Lame constant
 cdef double f_0 = 0                                  # second Lame constant
 
+# Boundary marker (external force).
+cdef int GAMMA_3_BDY = 3
+
 # Boundary condition types
 cdef c_BCType bc_type(int marker):
     if marker == 1:
@@ -50,8 +53,8 @@ def set_forms(WeakForm dp):
     dp.thisptr.add_matrix_form(0, 0, &bilinear_form_0_0, &_order_bf, H2D_SYM)
     dp.thisptr.add_matrix_form(0, 1, &bilinear_form_0_1, &_order_bf, H2D_SYM)
     dp.thisptr.add_matrix_form(1, 1, &bilinear_form_1_1, &_order_bf, H2D_SYM)
-    dp.thisptr.add_vector_form_surf(0, &linear_form_surf_0, &_order_lf);
-    dp.thisptr.add_vector_form_surf(1, &linear_form_surf_1, &_order_lf);
+    dp.thisptr.add_vector_form_surf(0, &linear_form_surf_0, &_order_lf, GAMMA_3_BDY)
+    dp.thisptr.add_vector_form_surf(1, &linear_form_surf_1, &_order_lf, GAMMA_3_BDY)
 
 def set_bc(H1Space xdisp, H1Space ydisp):
     xdisp.thisptr.set_bc_types(&bc_type)

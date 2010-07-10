@@ -3,6 +3,7 @@ from hermes2d._hermes2d cimport scalar, H1Space, BC_ESSENTIAL, BC_NATURAL, c_BCT
 
 import math
 
+# Problem parameters.
 cdef double HEATCAP = 1e6
 cdef double RHO = 3000
 cdef double LAMBDA = 1e5
@@ -10,6 +11,7 @@ cdef double ALPHA = 10
 cdef double T_INIT = 10
 cdef double FINAL_TIME = 86400
 
+# Global time variable
 cdef double TIME = 0
 
 cdef double TAU = 300.0
@@ -69,7 +71,7 @@ cdef c_Ord linear_form_surf_ord(int n, double *wt, FuncOrd **t, FuncOrd *v, Geom
     return create_Ord(20)
 #return int_v_ord(n, wt, v)
 
-def set_forms(WeakForm wf, Solution s):
+def set_forms(WeakForm wf):
     wf.thisptr.add_matrix_form(0, 0, &bilinear_form, &bilinear_form_ord)
     wf.thisptr.add_matrix_form_surf(0, 0, &bilinear_form_surf, &bilinear_form_surf_ord, marker_air)
 

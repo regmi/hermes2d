@@ -46,7 +46,8 @@ sview = ScalarView("Coarse solution", 0, 100, 798, 700)
 oview = OrderView("Polynomial orders", 800, 100, 798, 700)
 
 # Initialize the linear system.
-ls = LinSystem(wf, space)
+ls = LinSystem(wf)
+ls.set_spaces(space)
 
 # Assemble and solve the matrix problem
 sln = Solution()

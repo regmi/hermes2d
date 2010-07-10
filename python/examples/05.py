@@ -40,7 +40,8 @@ wf = WeakForm()
 set_forms(wf)
 
 # Initialize the linear system.
-ls = LinSystem(wf, space)
+ls = LinSystem(wf)
+ls.set_spaces(space)
 
 # Assemble and solve the matrix problem
 sln = Solution()
