@@ -27,9 +27,9 @@ from hermes2d.examples import get_bracket_mesh
 # h-adaptivity via the CAND_LIST option, and compare the multi-mesh vs. single-mesh
 # using the MULTI parameter.
 
-SOLVE_ON_COARSE_MESH = False  # If true, coarse mesh FE problem is solved in every adaptivity step.
+SOLVE_ON_COARSE_MESH = True  # If true, coarse mesh FE problem is solved in every adaptivity step.
 P_INIT_U = 2             # Initial polynomial degree for u
-P_INIT_U = 2             # Initial polynomial degree for v
+P_INIT_V = 2             # Initial polynomial degree for v
 INIT_REF_BDY = 3         # Number of initial boundary refinements
 MULTI = True             # MULTI = true  ... use multi-mesh,
                             # MULTI = false ... use single-mesh.
@@ -69,25 +69,19 @@ NDOF_STOP = 60000        # Adaptivity process stops when the number of degrees o
 
 H2DRS_DEFAULT_ORDER = -1 # A default order. Used to indicate an unkonwn order or a maximum support order
 
-# Problem constants
-E  = 200e9               # Young modulus for steel: 200 GPa
-nu = 0.3                 # Poisson ratio
-lamda = (E * nu) / ((1 + nu) * (1 - 2*nu))
-mu = E / (2*(1 + nu))
-
 # Load the mesh
 umesh = Mesh()
 vmesh = Mesh()
 umesh.load(get_bracket_mesh())
 if MULTI == False:
-	umesh.refine_towards_boundary(1, INIT_REF_BDY)
+    umesh.refine_towards_boundary(1, INIT_REF_BDY)
     
 # Create initial mesh (master mesh).
 vmesh.copy(umesh)
 
 # Initial mesh refinements in the vmesh towards the boundary
 if MULTI == True:
-	vmesh.refine_towards_boundary(1, INIT_REF_BDY)
+    vmesh.refine_towards_boundary(1, INIT_REF_BDY)
 
 # Create the x displacement space
 uspace = H1Space(umesh, P_INIT_U)
@@ -106,14 +100,13 @@ vview = ScalarView("Coarse mesh solution v", 1150, 0, 400, 300)
 # Initialize refinement selector
 selector = H1ProjBasedSelector(CAND_LIST, CONV_EXP, H2DRS_DEFAULT_ORDER)
 
-# Initialize the linear system.
+# Initialize the coarse mesh problem
 ls = LinSystem(wf)
-ls.set_spaces(space)
+ls.set_spaces(uspace, vspace)
 
 # adaptivity loop
 it = 1
 done = False
-cpu = 0.0
 u_sln_coarse = Solution()
 v_sln_coarse = Solution()
 u_sln_fine = Solution()
@@ -127,46 +120,40 @@ while(not done):
     # Assemble and Solve the fine mesh problem
     rs = RefSystem(ls)
     rs.assemble()
-    rs.solve_system(x_sln_fine, y_sln_fine, lib="scipy")
+    rs.solve_system(u_sln_fine, v_sln_fine, lib="scipy")
 
     # Either solve on coarse mesh or project the fine mesh solution 
     # on the coarse mesh.
     if SOLVE_ON_COARSE_MESH:
-      ls.assemble()
-      ls.solve_system(x_sln_coarse, y_sln_coarse, lib="scipy"))
-    else
-      ls.project_global(Tuple<MeshFunction*>(&u_sln_fine, &v_sln_fine), 
-                        Tuple<Solution*>(&u_sln_coarse, &v_sln_coarse))
+        ls.assemble()
+        ls.solve_system(u_sln_coarse, v_sln_coarse, lib="scipy")
+    else:
+        ls.project_global()
 
-    # View the solution -- this can be slow; for illustration only
-    stress_coarse = VonMisesFilter(u_sln_coarse, v_sln_coarse, mu, lamda)
-    #sview.set_min_max_range(0, 3e4)
-    sview.show(stress_coarse)
-    #xoview.show(xdisp)
-    #yoview.show(ydisp)
-    umesh.plot(space=xdisp)
-    vmesh.plot(space=ydisp)
+    # View the solution and meshes
+    uview.show(u_sln_coarse)
+    vview.show(v_sln_coarse)
+    umesh.plot(space=uspace)
+    vmesh.plot(space=vspace)
 
     # Calculate element errors and total error estimate
-    hp = H1Adapt([xdisp, ydisp])
-    hp.set_solutions([x_sln_coarse, y_sln_coarse], [x_sln_fine, y_sln_fine]);
+    hp = H1Adapt(ls)
+    hp.set_solutions([u_sln_coarse, v_sln_coarse], [u_sln_fine, v_sln_fine]);
     set_hp_forms(hp)
     err_est = hp.calc_error() * 100
 
     print("Error estimate: %s" % err_est)
 
-# If err_est too large, adapt the mesh
+    # If err_est too large, adapt the mesh
     if err_est < ERR_STOP:
         done = True
     else:
-        hp.adapt(selector, THRESHOLD, STRATEGY, MESH_REGULARITY, SAME_ORDERS)
-        ndofs = xdisp.assign_dofs()
-        ndofs += ydisp.assign_dofs(ndofs)
-
-        if ndofs >= NDOF_STOP:
+        MULTI = False if MULTI == True else True
+        hp.adapt(selector, THRESHOLD, STRATEGY, MESH_REGULARITY, MULTI) 
+        if ls.get_num_dofs() >= NDOF_STOP:
             done = True
-
+    
 
 # Show the fine solution - this is the final result
-stress_fine = VonMisesFilter(x_sln_fine, y_sln_fine, mu, lamda)
-sview.show(stress_fine)
+uview.show(u_sln_fine)
+vview.show(v_sln_fine)

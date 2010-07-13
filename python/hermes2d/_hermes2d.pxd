@@ -281,6 +281,7 @@ cdef extern from "hermes2d.h":
         c_PrecalcShapeset *get_pss(int n)
         void copy(c_LinSystem *sys)
         void assemble()
+        int get_num_dofs()
         int solve(int n, ...)
         int solve2(int n, ...)        
         void save_matrix_matlab(char *filename, char *varname)

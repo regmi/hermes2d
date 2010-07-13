@@ -1303,6 +1303,9 @@ cdef class LinSystem:
         self.thisptr.get_rhs(rhs, n)
         return c2numpy_double(rhs, n)
 
+    def get_num_dofs(self):
+        self.thisptr.get_num_dofs()
+
 cdef class RefSystem(LinSystem):
 
     def __init__(self, LinSystem ls):
@@ -1534,7 +1537,7 @@ cdef class H1ProjBasedSelector(ProjBasedSelector):
     - ```max_order``` defined a maximum order which should be used by the refinement. Currently, the maximum order is 9. Supply -1 to use the maximum supported order.
     - ```h1_shapeset``` expects an instance of the class H1Shapeset.
     """
-    def __cinit__(self, int cand_list, double conv_exp, int max_order, H1Shapeset shapeset):
+    def __cinit__(self, int cand_list, double conv_exp, int max_order, H1Shapeset shapeset = None):
         self.thisptr = <c_ProjBasedSelector*>(new_H1ProjBasedSelector(<c_CandList>cand_list, conv_exp, max_order, NULL))
 
 cdef class L2ProjBasedSelector(ProjBasedSelector):

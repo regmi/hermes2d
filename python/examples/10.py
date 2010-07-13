@@ -33,7 +33,7 @@
 # Import modules
 from hermes2d import Mesh, MeshView, VectorView, OrderView, H1Shapeset, PrecalcShapeset, H1Space, \
         WeakForm, Solution, ScalarView, LinSystem, DummySolver, RefSystem, \
-	H1Adapt, H1ProjBasedSelector, CandList, \
+    H1Adapt, H1ProjBasedSelector, CandList, \
         H2D_EPS_HIGH, H2D_FN_DX, H2D_FN_DY
 
 from hermes2d.examples.c10 import set_bc, set_forms
@@ -58,7 +58,7 @@ STRATEGY = 1            # Adaptive strategy:
 CAND_LIST = CandList.H2D_HP_ANISO_H  # Predefined list of element refinement candidates.
                         # Possible values are are attributes of the class CandList:
                         # H2D_P_ISO, H2D_P_ANISO, H2D_H_ISO, H2D_H_ANISO, H2D_HP_ISO, H2D_HP_ANISO_H, H2D_HP_ANISO_P, H2D_HP_ANISO
-			            # See User Documentation for details.					   
+                        # See User Documentation for details.                      
 
 MESH_REGULARITY = -1    # Maximum allowed level of hanging nodes:
                         # MESH_REGULARITY = -1 ... arbitrary level hangning nodes (default),
@@ -91,7 +91,7 @@ set_forms(wf)
 
 # Initialize views
 sview = ScalarView("Coarse solution", 0, 0, 600, 1000)
-gview = VectorView("Gradient", 610, 0, 600, 1000)
+#gview = VectorView("Gradient", 610, 0, 600, 1000)
 oview = OrderView("Polynomial orders", 1220, 0, 600, 1000)
 
 # Initialize refinement selector.
@@ -104,6 +104,8 @@ ls.set_spaces(space)
 # Adaptivity loop:
 sln_coarse = Solution()
 sln_fine = Solution()
+done = False
+it = 1
 
 while(not done):
 
@@ -121,8 +123,8 @@ while(not done):
         ls.assemble()
         ls.solve_system(sln_coarse)
     else:
-		ls.project_global(sln_fine, sln_coarse)
-		
+        ls.project_global(sln_fine, sln_coarse)
+        
     # View the coarse mesh solution
     sview.show(sln_coarse)
 
@@ -130,7 +132,7 @@ while(not done):
     mesh.plot()
 
     # Calculate element errors and total error estimate
-    hp = H1Adapt([space])
+    hp = H1Adapt(ls)
     hp.set_solutions([sln_coarse], [sln_fine])
     err_est = hp.calc_error() * 100
     print("Error estimate: %d" % err_est)
@@ -139,15 +141,14 @@ while(not done):
     if (err_est < ERR_STOP):
         done = True
     else:
-        hp.adapt(selector, THRESHOLD, STRATEGY, MESH_REGULARITY)
-        ndofs = space.assign_dofs()
+        done = hp.adapt(selector, THRESHOLD, STRATEGY, MESH_REGULARITY)
 
-        if (ndofs >= NDOF_STOP):
+        if (ls.get_num_dofs() >= NDOF_STOP):
             done = True
 
-print ("Total running time: %d sec" % cpu)
+#print ("Total running time: %d sec" % cpu)
 
 # Show the fine solution - this is the final result
 sview.show(sln_fine)
-gview.show(sln_fine, sln_fine, H2D_EPS_HIGH, H2D_FN_DX_0, H2D_FN_DY_0)
+#gview.show(sln_fine, sln_fine, H2D_EPS_HIGH, H2D_FN_DX_0, H2D_FN_DY_0)
 
