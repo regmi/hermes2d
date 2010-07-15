@@ -3,6 +3,8 @@ cdef extern from "math.h":
     double c_sqr "sqr"(double x)
     double c_sqrt "sqrt"(double x)
     double c_atan "atan"(double x)
+    double c_atan2 "atan2"(double x, double y)
+    double c_cos "cos"(double x)
     double c_pi "M_PI"
 
 cdef extern from "stdlib.h":
