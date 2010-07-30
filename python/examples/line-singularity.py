@@ -1,16 +1,15 @@
-#  This is an elliptic problem with known exact solution. The solution contains
-#  a very strong singularity that represents a challenge for most adaptive methods.
+#  This is a simple elliptic problem with known exact solution where one
+#  can compare isotropic and anisotropic refinements.
 #
-#  PDE: -div(A(x,y) grad u) = 0
-#  where a(x,y) = R in the first and third quadrant
-#               = 1 in the second and fourth quadrant
+#  PDE: -Laplace u - K*K*u = f.
+#  where f is dictated by the exact solution.
 #
-#  Exact solution: u(x,y) = cos(M_PI*y/2)    for x < 0
-#                  u(x,y) = cos(M_PI*y/2) + pow(x, alpha)   for x > 0   where alpha > 0.
+#  Exact solution: u(x,y) = cos(K*y)    for x < 0,
+#                  u(x,y) = cos(K*y) + pow(x, alpha)   for x > 0   where alpha > 0.
 #
-#  Domain: Square (-1,1)^2.
+#  Domain: square, see the file singpert.mesh.
 #
-#  BC:  Dirichlet given by exact solution.
+#  BC:  Homogeneous Dirichlet.
 
 # Import modules
 from hermes2d import Mesh, MeshView, VectorView, OrderView, H1Shapeset, PrecalcShapeset, H1Space, \
@@ -18,14 +17,14 @@ from hermes2d import Mesh, MeshView, VectorView, OrderView, H1Shapeset, PrecalcS
     H1Adapt, H1ProjBasedSelector, CandList, \
         H2D_EPS_HIGH, H2D_FN_DX, H2D_FN_DY
 
-from hermes2d.examples.ckellogg import set_bc, set_forms
-from hermes2d.examples import get_square_quad_mesh
+from hermes2d.examples.cline-singularity import set_bc, set_forms
+from hermes2d.examples import get_ls_square_quad_mesh
 
 #  The following parameters can be changed:
 
 SOLVE_ON_COARSE_MESH = True # If true, coarse mesh FE problem is solved in every adaptivity step.
                                          # If false, projection of the fine mesh solution on the coarse mesh is used. 
-INIT_REF_NUM = 1              # Number of initial mesh refinements.
+INIT_REF_NUM = 0              # Number of initial mesh refinements (the original mesh is just one element)
 P_INIT = 2                    # Initial polynomial degree of all mesh elements.
 THRESHOLD = 0.3            # This is a quantitative parameter of the adapt(...) function and
                                          # it has different meanings for various adaptive strategies (see below).
@@ -38,8 +37,8 @@ STRATEGY = 0                  # Adaptive strategy:
                                          # STRATEGY = 2 ... refine all elements whose error is larger
                                          #   than THRESHOLD.
                                          # More adaptive strategies can be created in adapt_ortho_h1.cpp.
-CAND_LIST = CandList.H2D_H_ANISO  # Predefined list of element refinement candidates. Possible values are
-                                         # H2D_P_ISO, H2D_P_ANISO, H2D_H_ISO, H2D_H_ANISO, H2D_HP_ISO,
+CAND_LIST = CandList.H2D_HP_ANISO # Predefined list of element refinement candidates. Possible values
+                                         # are H2D_P_ISO, H2D_P_ANISO, H2D_H_ISO, H2D_H_ANISO, H2D_HP_ISO,
                                          # H2D_HP_ANISO_H, H2D_HP_ANISO_P, H2D_HP_ANISO.
                                          # See User Documentation for details.
 MESH_REGULARITY = -1          # Maximum allowed level of hanging nodes:
@@ -50,16 +49,14 @@ MESH_REGULARITY = -1          # Maximum allowed level of hanging nodes:
                                          # their notoriously bad performance.
 CONV_EXP = 1.0             # Default value is 1.0. This parameter influences the selection of
                                          # cancidates in hp-adaptivity. See get_optimal_refinement() for details.
-ERR_STOP = 3.0             # Stopping criterion for adaptivity (rel. error tolerance between the
+ERR_STOP = 0.0001          # Stopping criterion for adaptivity (rel. error tolerance between the
                                          # fine mesh and coarse mesh solution in percent).
 NDOF_STOP = 100000            # Adaptivity process stops when the number of degrees of freedom grows
                                          # over this limit. This is to prevent h-adaptivity to go on forever.
 
-H2DRS_DEFAULT_ORDER = -1 # A default order. Used to indicate an unkonwn order or a maximum support order
-
 # Load the mesh.
 mesh = Mesh()
-mesh.load(get_square_quad_mesh())
+mesh.load(get_ls_square_quad_mesh())
 
 # Perform initial mesh refinements
 for i in range(INIT_REF_NUM):
@@ -68,6 +65,9 @@ for i in range(INIT_REF_NUM):
 # Create an H1 space with default shapeset
 space = H1Space(mesh, P_INIT)
 set_bc(space)
+
+# Enumerate degrees of freedom.
+ndof = assign_dofs(space)
 
 # Initialize the weak formulation
 wf = WeakForm()
@@ -93,7 +93,7 @@ sln_fine = Solution()
 while(not done):
     print("\n---- Adaptivity step %d ----\n" % it)
     it += 1
-
+    
     # Assemble and solve the fine mesh problem.
     rs = RefSystem(ls)
     rs.assemble()
@@ -115,7 +115,6 @@ while(not done):
     hp = H1Adapt(ls)
     hp.set_solutions([sln_coarse], [sln_fine])
     err_est = hp.calc_error() * 100
-    #print("Error estimate: %d" % err_est)
 
     # If err_est too large, adapt the mesh.
     if (err_est < ERR_STOP):
@@ -128,4 +127,3 @@ while(not done):
 
 # Show the fine mesh solution - the final result.
 sview.show(sln_fine)
-
