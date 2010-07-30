@@ -1,16 +1,20 @@
-#  This is an elliptic problem with known exact solution. The solution contains
-#  a very strong singularity that represents a challenge for most adaptive methods.
+#  This benchmark problem with known exact solution describes an electromagnetic wave that hits
+#  a screen under the angle of 45 degrees, causing a very strong singularity at the tip of the 
+#  screen. Convergence graphs saved (both exact error and error estimate, and both wrt. dof number.
+#  and cpu time).
 #
-#  PDE: -div(A(x,y) grad u) = 0
-#  where a(x,y) = R in the first and third quadrant
-#               = 1 in the second and fourth quadrant
+#  PDE: time-harmonic Maxwell's equations.
 #
-#  Exact solution: u(x,y) = cos(M_PI*y/2)    for x < 0
-#                  u(x,y) = cos(M_PI*y/2) + pow(x, alpha)   for x > 0   where alpha > 0.
+#  Known exact solution, see the function exact().
 #
-#  Domain: Square (-1,1)^2.
+#  Domain: square domain cut from the midpoint of the left edge to the center (center
+#          point of left edge duplicated).
 #
-#  BC:  Dirichlet given by exact solution.
+#  Meshes: you can either use "screen-quad.mesh" (quadrilateral mesh) or
+#          "screen-tri.mesh" (triangular mesh). See the command mesh.load(...) below.
+#
+#  BC: tangential component of solution taken from known exact solution (essential BC),
+#      see function essential_bc_values() below.
 
 # Import modules
 from hermes2d import Mesh, MeshView, VectorView, OrderView, H1Shapeset, PrecalcShapeset, H1Space, \
@@ -18,18 +22,22 @@ from hermes2d import Mesh, MeshView, VectorView, OrderView, H1Shapeset, PrecalcS
     H1Adapt, H1ProjBasedSelector, CandList, \
         H2D_EPS_HIGH, H2D_FN_DX, H2D_FN_DY
 
-from hermes2d.examples.ckellogg import set_bc, set_forms
-from hermes2d.examples import get_square_quad_mesh
+from hermes2d.examples.cscreen import set_bc, set_forms
+from hermes2d.examples import get_screen-quad_mesh
 
-#  The following parameters can be changed:
+# The following parameters can be changed:
 
 SOLVE_ON_COARSE_MESH = True # If true, coarse mesh FE problem is solved in every adaptivity step.
                                          # If false, projection of the fine mesh solution on the coarse mesh is used. 
-INIT_REF_NUM = 1              # Number of initial mesh refinements.
-P_INIT = 2                    # Initial polynomial degree of all mesh elements.
-THRESHOLD = 0.3            # This is a quantitative parameter of the adapt(...) function and
+INIT_REF_NUM = 1              # Number of initial uniform mesh refinements.
+P_INIT = 1                    # Initial polynomial degree. NOTE: The meaning is different from
+                                         # standard continuous elements in the space H1. Here, P_INIT refers
+                                         # to the maximum poly order of the tangential component, and polynomials
+                                         # of degree P_INIT + 1 are present in element interiors. P_INIT = 0
+                                         # is for Whitney elements.
+THRESHOLD = 0.5            # This is a quantitative parameter of the adapt(...) function and
                                          # it has different meanings for various adaptive strategies (see below).
-STRATEGY = 0                  # Adaptive strategy:
+STRATEGY = 1                  # Adaptive strategy:
                                          # STRATEGY = 0 ... refine elements until sqrt(THRESHOLD) times total
                                          #   error is processed. If more elements have similar errors, refine
                                          #   all to keep the mesh symmetric.
@@ -38,7 +46,7 @@ STRATEGY = 0                  # Adaptive strategy:
                                          # STRATEGY = 2 ... refine all elements whose error is larger
                                          #   than THRESHOLD.
                                          # More adaptive strategies can be created in adapt_ortho_h1.cpp.
-CAND_LIST = CandList.H2D_H_ANISO  # Predefined list of element refinement candidates. Possible values are
+CAND_LIST = CandList.H2D_HP_ANISO_H # Predefined list of element refinement candidates. Possible values are
                                          # H2D_P_ISO, H2D_P_ANISO, H2D_H_ISO, H2D_H_ANISO, H2D_HP_ISO,
                                          # H2D_HP_ANISO_H, H2D_HP_ANISO_P, H2D_HP_ANISO.
                                          # See User Documentation for details.
@@ -50,23 +58,22 @@ MESH_REGULARITY = -1          # Maximum allowed level of hanging nodes:
                                          # their notoriously bad performance.
 CONV_EXP = 1.0             # Default value is 1.0. This parameter influences the selection of
                                          # cancidates in hp-adaptivity. See get_optimal_refinement() for details.
-ERR_STOP = 3.0             # Stopping criterion for adaptivity (rel. error tolerance between the
+ERR_STOP = 2.0             # Stopping criterion for adaptivity (rel. error tolerance between the
                                          # fine mesh and coarse mesh solution in percent).
-NDOF_STOP = 100000            # Adaptivity process stops when the number of degrees of freedom grows
+NDOF_STOP = 50000             # Adaptivity process stops when the number of degrees of freedom grows
                                          # over this limit. This is to prevent h-adaptivity to go on forever.
-
-H2DRS_DEFAULT_ORDER = -1 # A default order. Used to indicate an unkonwn order or a maximum support order
 
 # Load the mesh.
 mesh = Mesh()
-mesh.load(get_square_quad_mesh())
+mesh.load(get_screen-quad_mesh())   # quadrilaterals
+#mesh.load(get_screen-tri_mesh())   # triangles
 
 # Perform initial mesh refinements
 for i in range(INIT_REF_NUM):
     mesh.refine_all_elements()
 
-# Create an H1 space with default shapeset
-space = H1Space(mesh, P_INIT)
+# Create an Hcurl space with default shapeset
+space = HcurlSpace(mesh, P_INIT)
 set_bc(space)
 
 # Initialize the weak formulation
@@ -74,15 +81,18 @@ wf = WeakForm()
 set_forms(wf)
 
 # Initialize views.
-sview = ScalarView("Coarse mesh solution", 0, 0, 440, 350)
-oview = OrderView("Coarse mesh", 450, 0, 400, 350)
+Xview_r = ScalarView("Electric field X - real",   0, 0, 300, 280)
+Yview_r = ScalarView("Electric field Y - real", 310, 0, 300, 280)
+Xview_i = ScalarView("Electric field X - imag", 620, 0, 300, 280)
+Yview_i = ScalarView("Electric field Y - imag", 930, 0, 300, 280)
+ord = OrderView("Polynomial Orders", 0, 335, 300, 280)
 
 # Initialize refinement selector.
 selector = H1ProjBasedSelector(CAND_LIST, CONV_EXP, H2DRS_DEFAULT_ORDER)
 
 # Initialize the coarse mesh problem.
 ls = LinSystem(wf)
-ls.set_spaces(space)
+ls.set_spaces(space)space)
 
 # Adaptivity loop:
 it = 1
@@ -93,7 +103,7 @@ sln_fine = Solution()
 while(not done):
     print("\n---- Adaptivity step %d ----\n" % it)
     it += 1
-
+    
     # Assemble and solve the fine mesh problem.
     rs = RefSystem(ls)
     rs.assemble()
@@ -107,16 +117,34 @@ while(not done):
     else:
         ls.project_global(sln_fine, sln_coarse)
 
-    # View the solution and mesh.
-    sview.show(sln_coarse)
-    mesh.plot(space)
+    # Calculate error wrt. exact solution.
+    ex = Solution()
+    ex.set_exact(mesh, exact);
+    err_exact = 100 * ex.hcurl_error(sln_coarse, ex)
+
+    # Visualization.
+    real = RealFilter(sln_coarse)
+    imag = ImagFilter(sln_coarse)
+    Xview_r.set_min_max_range(-3.0, 1.0)
+    #Xview_r.show_scale(false)
+    Xview_r.show(real, H2D_EPS_NORMAL, H2D_FN_VAL_0)
+    Yview_r.set_min_max_range(-4.0, 4.0)
+    #Yview_r.show_scale(false)
+    Yview_r.show(real, H2D_EPS_NORMAL, H2D_FN_VAL_1)
+    Xview_i.set_min_max_range(-1.0, 4.0)
+    #Xview_i.show_scale(false)
+    Xview_i.show(imag, H2D_EPS_NORMAL, H2D_FN_VAL_0)
+    Yview_i.set_min_max_range(-4.0, 4.0)
+    #Yview_i.show_scale(false)
+    Yview_i.show(imag, H2D_EPS_NORMAL, H2D_FN_VAL_1)
+    ord.show(space)
 
     # Calculate error estimate wrt. fine mesh solution.
-    hp = H1Adapt(ls)
-    hp.set_solutions([sln_coarse], [sln_fine])
-    err_est = hp.calc_error() * 100
-    #print("Error estimate: %d" % err_est)
-
+    hp = HcurlAdapt(ls)
+    hp.set_solutions(sln_coarse, sln_fine)
+    err_est_adapt = hp.calc_error() * 100
+    err_est_hcurl = hcurl_error(sln_coarse, sln_fine) * 100
+    
     # If err_est too large, adapt the mesh.
     if (err_est < ERR_STOP):
         done = True
@@ -125,7 +153,3 @@ while(not done):
 
         if (ls.get_num_dofs() >= NDOF_STOP):
             done = True
-
-# Show the fine mesh solution - the final result.
-sview.show(sln_fine)
-
