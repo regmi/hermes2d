@@ -27,15 +27,17 @@ add_example(c11)
 add_example(c12)
 add_example(c22)
 add_example(ckellogg)
+add_example(cline_singularity)
+add_example(csmooth_iso)
 
-install(TARGETS c03 c04 c05 c06 c07 c08 c09 c10 c11 c12 c22 ckellogg
+install(TARGETS c03 c04 c05 c06 c07 c08 c09 c10 c11 c12 c22 ckellogg cline_singularity csmooth_iso
             RUNTIME DESTINATION lib/python/hermes2d/examples
             ARCHIVE DESTINATION lib/python/hermes2d/examples
             LIBRARY DESTINATION lib/python/hermes2d/examples
         )
 
 install(FILES __init__.py domain.mesh sample.mesh cylinder4.mesh 07.mesh
-    12.mesh bracket.mesh cathedral.mesh motor.mesh square_quad.mesh
+    12.mesh bracket.mesh cathedral.mesh motor.mesh square_quad.mesh ls_square_quad.mesh siso_square_quad.mesh
     DESTINATION lib/python/hermes2d/examples
     )
 

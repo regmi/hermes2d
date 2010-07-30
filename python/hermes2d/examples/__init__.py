@@ -71,3 +71,19 @@ def get_square_quad_mesh():
     this_dir = os.path.dirname(os.path.abspath(__file__))
     mesh = os.path.join(this_dir, "square_quad.mesh")
     return os.path.normpath(mesh)
+
+def get_ls_square_quad_mesh():
+    """
+    Returns an example mesh, that is distributed with hermes2d.
+    """
+    this_dir = os.path.dirname(os.path.abspath(__file__))
+    mesh = os.path.join(this_dir, "ls_square_quad.mesh")
+    return os.path.normpath(mesh)
+
+def get_ls_square_quad_mesh():
+    """
+    Returns an example mesh, that is distributed with hermes2d.
+    """
+    this_dir = os.path.dirname(os.path.abspath(__file__))
+    mesh = os.path.join(this_dir, "siso_square_quad.mesh")
+    return os.path.normpath(mesh)
