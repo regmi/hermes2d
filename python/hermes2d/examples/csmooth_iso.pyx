@@ -4,11 +4,9 @@ from hermes2d._hermes2d cimport scalar, FuncReal, GeomReal, WeakForm, \
         c_atan, c_pi, c_sqrt, c_sqr, c_atan2, c_cos, c_sin
 
 # Exact solution.
-#cdef static double fn(double x, double y):
 cdef double fn(double x, double y):
     return c_sin(x)*c_sin(y)
 
-#cdef static double fndd(double x, double y, double& dx, double& dy):
 cdef double fndd(double x, double y, double& dx, double& dy):
     dx = c_cos(x)*c_sin(y)
     dy = c_sin(x)*c_cos(y)
@@ -22,7 +20,6 @@ cdef c_BCType bc_type_siso(int marker):
 cdef scalar essential_bc_values(int ess_bdy_marker, double x, double y):
     return 0
     
-#cdef c_Real rhs(c_Real x, c_Real y):
 cdef double rhs(double x, double y):
     return 2*c_sin(x)*c_sin(y)
 
@@ -30,7 +27,7 @@ cdef scalar bilinear_form(int n, double *wt, FuncReal **t, FuncReal *u, FuncReal
         *e, ExtDataReal *ext):
     return int_grad_u_grad_v(n, wt, u, v)
 
-cdef scalar linear_form(int n, double *wt, FuncReal **t, FuncReal *u, FuncReal *v,
+cdef scalar linear_form(int n, double *wt, FuncReal **t, FuncReal *v,
         GeomReal *e, ExtDataReal *ext):
     return int_F_v(n, wt, &rhs, v, e)
     
@@ -38,13 +35,13 @@ cdef c_Ord _order_bf(int n, double *wt, FuncOrd **t, FuncOrd *u, FuncOrd *v, Geo
         *e, ExtDataOrd *ext):
     return int_grad_u_grad_v_ord(n, wt, u, v)
     
-cdef c_Ord _linear_form_ord(int n, double *wt, FuncOrd **t, FuncOrd *u, FuncOrd *v, GeomOrd
+cdef c_Ord _linear_form_ord(int n, double *wt, FuncOrd **t, FuncOrd *v, GeomOrd
         *e, ExtDataOrd *ext):
     return create_Ord(30)
 
 def set_forms(WeakForm dp):
     dp.thisptr.add_matrix_form(0, 0, &bilinear_form, &_order_bf, H2D_SYM)
-    dp.thisptr.add_vector_form(0, 0, &linear_form, &_linear_form_ord)
+    dp.thisptr.add_vector_form(0, &linear_form, &_linear_form_ord)
 
 def set_bc(H1Space space):
     space.thisptr.set_bc_types(&bc_type_siso)

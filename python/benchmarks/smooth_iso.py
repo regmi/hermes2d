@@ -12,7 +12,7 @@
 #  BC:  Dirichlet, given by exact solution.
 
 # Import modules
-from hermes2d import Mesh, MeshView, VectorView, OrderView, H1Shapeset, PrecalcShapeset, H1Space, is_HP, \
+from hermes2d import Mesh, MeshView, VectorView, OrderView, H1Shapeset, PrecalcShapeset, H1Space, is_HP, is_P_ANISO, \
         WeakForm, Solution, ScalarView, LinSystem, DummySolver, RefSystem, \
     H1Adapt, H1ProjBasedSelector, CandList, \
         H2D_EPS_HIGH, H2D_FN_DX, H2D_FN_DY
@@ -52,6 +52,7 @@ ERR_STOP = 1e-4            # Stopping criterion for adaptivity (rel. error toler
                                          # fine mesh and coarse mesh solution in percent).
 NDOF_STOP = 60000             # Adaptivity process stops when the number of degrees of freedom grows
                                          # over this limit. This is to prevent h-adaptivity to go on forever.
+H2DRS_DEFAULT_ORDER = -1
 
 # Load the mesh.
 mesh = Mesh()
@@ -67,7 +68,7 @@ if P_INIT == 1:
 # Create an H1 space with default shapeset.
 space = H1Space(mesh, P_INIT)
 set_bc(space)
-if (is_p_aniso(CAND_LIST)):
+if (is_P_ANISO(CAND_LIST)):
     space.set_element_order(0, H2D_MAKE_QUAD_ORDER(P_INIT, P_INIT))
 
 # Initialize the weak formulation
@@ -75,8 +76,8 @@ wf = WeakForm()
 set_forms(wf)
 
 # Initialize views.
-sview = ScalarView("Coarse mesh solution", 0, 0, 440, 350)
-oview = OrderView("Coarse mesh", 450, 0, 400, 350)
+sview = ScalarView()
+oview = OrderView()
 
 # Initialize refinement selector.
 selector = H1ProjBasedSelector(CAND_LIST, CONV_EXP, H2DRS_DEFAULT_ORDER)
@@ -98,7 +99,7 @@ while (not done):
     # Assemble and solve the fine mesh problem.
     rs = RefSystem(ls)
     rs.assemble()
-    rs.solve_system(sln_fine, lib="hermes")
+    rs.solve_system(sln_fine)
 
     # Either solve on coarse mesh or project the fine mesh solution 
     # on the coarse mesh.

@@ -1470,9 +1470,17 @@ cdef class CandList:
     H2D_HP_ANISO = c_H2D_HP_ANISO
 
 def is_HP(int cl):
-    if cl == 0 or cl ==1 or cl == 2 or cl == 3:
+    if cl == 0 or cl == 1 or cl == 2 or cl == 3:
         return False
     elif cl == 4 or cl == 5 or cl == 6 or cl == 7:
+        return True
+    else:
+        return False
+        
+def is_P_ANISO(int cl):
+    if cl == 0 or cl == 2 or cl == 3 or cl == 4 or cl == 5 or cl == 7:
+        return False
+    elif cl == 1 or cl == 6:
         return True
     else:
         return False
