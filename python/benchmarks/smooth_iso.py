@@ -12,7 +12,7 @@
 #  BC:  Dirichlet, given by exact solution.
 
 # Import modules
-from hermes2d import Mesh, MeshView, VectorView, OrderView, H1Shapeset, PrecalcShapeset, H1Space, \
+from hermes2d import Mesh, MeshView, VectorView, OrderView, H1Shapeset, PrecalcShapeset, H1Space, is_HP, \
         WeakForm, Solution, ScalarView, LinSystem, DummySolver, RefSystem, \
     H1Adapt, H1ProjBasedSelector, CandList, \
         H2D_EPS_HIGH, H2D_FN_DX, H2D_FN_DY
@@ -55,15 +55,15 @@ NDOF_STOP = 60000             # Adaptivity process stops when the number of degr
 
 # Load the mesh.
 mesh = Mesh()
-mesh.load(get_smooth_iso_square_quad_mesh())
+mesh.load(get_square_quad_mesh_smooth_iso())
 
 # Avoid zero ndof situation.
 if P_INIT == 1:
-    if is_hp(CAND_LIST)):
+    if is_HP(CAND_LIST):
         P_INIT += 1
     else:
         mesh.refine_element(0, 0)
-
+        
 # Create an H1 space with default shapeset.
 space = H1Space(mesh, P_INIT)
 set_bc(space)

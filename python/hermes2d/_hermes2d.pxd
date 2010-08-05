@@ -382,8 +382,7 @@ cdef extern from "hermes2d.h":
         int2* get_dashes()
         int get_num_dashes()
     c_Vectorizer *new_Vectorizer "new Vectorizer" ()
-
-
+    
     double int_u "int_u<double, double>"(int n, double *wt, FuncReal *u)
     double int_l2_norm(RealFunction* fu, RefMap* ru)
     double l2_norm(c_MeshFunction* fu)
