@@ -17,7 +17,7 @@ from hermes2d import Mesh, MeshView, VectorView, OrderView, H1Shapeset, PrecalcS
         H2D_EPS_HIGH, H2D_FN_DX, H2D_FN_DY
 
 from hermes2d.examples.csmooth_aniso-x import set_bc, set_forms
-from hermes2d.examples import get_smooth_aniso-x_square_quad.
+from hermes2d.examples import get_square_quad_mesh_smooth_aniso-x
 
 #  The following parameters can be changed:
 
@@ -56,7 +56,7 @@ H2DRS_DEFAULT_ORDER = -1 # A default order. Used to indicate an unkonwn order or
 
 # Load the mesh.
 mesh = Mesh()
-mesh.load(get_smooth_aniso-x_square_quad.())        
+mesh.load(get_square_quad_mesh_smooth_aniso-x())        
 
 # Avoid zero ndof situation.
 if (P_INIT == 1):
@@ -76,8 +76,8 @@ wf = WeakForm()
 set_forms(wf)
 
 # Initialize views.
-sview = ScalarView("Coarse mesh solution", 0, 0, 440, 350)
-oview = OrderView("Coarse mesh", 450, 0, 400, 350)
+sview = ScalarView()
+oview = OrderView()
 
 # Initialize refinement selector.
 selector = H1ProjBasedSelector(CAND_LIST, CONV_EXP, H2DRS_DEFAULT_ORDER)
@@ -100,7 +100,7 @@ while(not done):
     info("Solving on fine mesh.");
     rs = RefSystem(ls)
     rs.assemble()
-    rs.solve_system(sln_fine, lib="hermes")
+    rs.solve_system(sln_fine)
 
     # Either solve on coarse mesh or project the fine mesh solution 
     # on the coarse mesh.
