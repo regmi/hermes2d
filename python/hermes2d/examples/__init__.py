@@ -96,7 +96,7 @@ def get_square_quad_mesh_smooth_iso():
     mesh = os.path.join(this_dir, "square_quad.mesh")
     return os.path.normpath(mesh)
 
-def get_square_quad_mesh_smooth_aniso-x():
+def get_square_quad_mesh_smooth_aniso_x():
     """
     Returns an example mesh, that is distributed with hermes2d.
     """
