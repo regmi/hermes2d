@@ -52,7 +52,7 @@ ERR_STOP = 1e-4            # Stopping criterion for adaptivity (rel. error toler
                                          # fine mesh and coarse mesh solution in percent).
 NDOF_STOP = 60000             # Adaptivity process stops when the number of degrees of freedom grows
                                          # over this limit. This is to prevent h-adaptivity to go on forever.
-H2DRS_DEFAULT_ORDER = -1
+H2DRS_DEFAULT_ORDER = -1 # A default order. Used to indicate an unkonwn order or a maximum support order
 
 # Load the mesh.
 mesh = Mesh()
