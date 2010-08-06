@@ -14,10 +14,10 @@
 from hermes2d import Mesh, MeshView, VectorView, OrderView, H1Shapeset, PrecalcShapeset, H1Space, \
         WeakForm, Solution, ScalarView, LinSystem, DummySolver, RefSystem, \
     H1Adapt, H1ProjBasedSelector, CandList, \
-        H2D_EPS_HIGH, H2D_FN_DX, H2D_FN_DY
+        H2D_EPS_HIGH, H2D_FN_DX, H2D_FN_DY, is_HP, is_P_ANISO
 
-from hermes2d.examples.csmooth_aniso-x import set_bc, set_forms
-from hermes2d.examples import get_square_quad_mesh_smooth_aniso-x
+from hermes2d.examples.csmooth_aniso_x import set_bc, set_forms
+from hermes2d.examples import get_square_quad_mesh_smooth_aniso_x
 
 #  The following parameters can be changed:
 
@@ -56,19 +56,19 @@ H2DRS_DEFAULT_ORDER = -1 # A default order. Used to indicate an unkonwn order or
 
 # Load the mesh.
 mesh = Mesh()
-mesh.load(get_square_quad_mesh_smooth_aniso-x())        
+mesh.load(get_square_quad_mesh_smooth_aniso_x())        
 
 # Avoid zero ndof situation.
 if (P_INIT == 1):
-    if (is_hp(CAND_LIST)):
-        P_INIT++
+    if (is_HP(CAND_LIST)):
+        P_INIT += 1
     else:
         mesh.refine_element(0, 2)
 
 # Create an H1 space with default shapeset
 space = H1Space(mesh, P_INIT)
 set_bc(space)
-if (is_p_aniso(CAND_LIST)):
+if (is_P_ANISO(CAND_LIST)):
     space.set_element_order(0, H2D_MAKE_QUAD_ORDER(P_INIT, 1))
 
 # Initialize the weak formulation

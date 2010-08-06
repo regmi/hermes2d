@@ -29,9 +29,9 @@ add_example(c22)
 add_example(ckellogg)
 #add_example(cline_singularity)
 add_example(csmooth_iso)
-add_example(csmooth_aniso-x)
+add_example(csmooth_aniso_x)
 
-install(TARGETS c03 c04 c05 c06 c07 c08 c09 c10 c11 c12 c22 ckellogg csmooth_iso csmooth_aniso-x
+install(TARGETS c03 c04 c05 c06 c07 c08 c09 c10 c11 c12 c22 ckellogg csmooth_iso csmooth_aniso_x
             RUNTIME DESTINATION lib/python/hermes2d/examples
             ARCHIVE DESTINATION lib/python/hermes2d/examples
             LIBRARY DESTINATION lib/python/hermes2d/examples
