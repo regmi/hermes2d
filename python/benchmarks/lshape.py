@@ -53,6 +53,8 @@ ERR_STOP = 0.01              # Stopping criterion for adaptivity (rel. error tol
 NDOF_STOP = 60000;               # Adaptivity process stops when the number of degrees of freedom grows
                                            # over this limit. This is to prevent h-adaptivity to go on forever.
 
+H2DRS_DEFAULT_ORDER = -1 # A default order. Used to indicate an unkonwn order or a maximum support order
+
 # Load the mesh.
 mesh = Mesh()
 mesh.load(get_lshape_mesh())
@@ -69,8 +71,8 @@ wf = WeakForm()
 set_forms(wf)
 
 # Initialize views.
-sview = ScalarView("Coarse mesh solution", 0, 0, 440, 350)
-oview = OrderView("Coarse mesh", 450, 0, 400, 350)
+sview = ScalarView()
+oview = OrderView()
 
 # Initialize refinement selector.
 selector = H1ProjBasedSelector(CAND_LIST, CONV_EXP, H2DRS_DEFAULT_ORDER)
@@ -103,8 +105,8 @@ while(not done):
         ls.project_global(sln_fine, sln_coarse)
 
     # Calculate error wrt. exact solution.
-    exact = exact(mesh, fndd)
-    err_exact = h1_error(sln_coarse, exact) * 100
+    #exact = ExactSolution(mesh, fndd)
+    #err_exact = h1_error(sln_coarse, exact) * 100
 
     # View the solution and mesh.
     sview.show(sln_coarse)
