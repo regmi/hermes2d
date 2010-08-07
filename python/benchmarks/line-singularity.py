@@ -17,7 +17,7 @@ from hermes2d import Mesh, MeshView, VectorView, OrderView, H1Shapeset, PrecalcS
     H1Adapt, H1ProjBasedSelector, CandList, \
         H2D_EPS_HIGH, H2D_FN_DX, H2D_FN_DY
 
-from hermes2d.examples.cline-singularity import set_bc, set_forms
+from hermes2d.examples.cline_singularity import set_bc, set_forms
 from hermes2d.examples import get_ls_square_quad_mesh
 
 #  The following parameters can be changed:
@@ -54,6 +54,8 @@ ERR_STOP = 0.0001          # Stopping criterion for adaptivity (rel. error toler
 NDOF_STOP = 100000            # Adaptivity process stops when the number of degrees of freedom grows
                                          # over this limit. This is to prevent h-adaptivity to go on forever.
 
+H2DRS_DEFAULT_ORDER = -1 # A default order. Used to indicate an unkonwn order or a maximum support order
+
 # Load the mesh.
 mesh = Mesh()
 mesh.load(get_ls_square_quad_mesh())
@@ -67,7 +69,7 @@ space = H1Space(mesh, P_INIT)
 set_bc(space)
 
 # Enumerate degrees of freedom.
-ndof = assign_dofs(space)
+ndof = space.assign_dofs()
 
 # Initialize the weak formulation
 wf = WeakForm()

@@ -42,21 +42,21 @@ cdef scalar bilinear_form(int n, double *wt, FuncReal **t, FuncReal *u, FuncReal
         *e, ExtDataReal *ext):
     return int_grad_u_grad_v(n, wt, u, v)
 
-cdef scalar linear_form(int n, double *wt, FuncReal **t, FuncReal *u, FuncReal *v,
+cdef scalar linear_form(int n, double *wt, FuncReal **t, FuncReal *v,
         GeomReal *e, ExtDataReal *ext):
-    return int_F_v(n, wt, &rhs, v, e)
+    return int_F_v(n, wt, rhs, v, e)
     
 cdef c_Ord _order_bf(int n, double *wt, FuncOrd **t, FuncOrd *u, FuncOrd *v, GeomOrd
         *e, ExtDataOrd *ext):
     return int_grad_u_grad_v_ord(n, wt, u, v)
     
-cdef c_Ord _linear_form_ord(int n, double *wt, FuncOrd **t, FuncOrd *u, FuncOrd *v, GeomOrd
+cdef c_Ord _linear_form_ord(int n, double *wt, FuncOrd **t, FuncOrd *v, GeomOrd
         *e, ExtDataOrd *ext):
     return create_Ord(30)
 
 def set_forms(WeakForm dp):
     dp.thisptr.add_matrix_form(0, 0, &bilinear_form, &_order_bf, H2D_SYM)
-    dp.thisptr.add_vector_form(0, 0, &linear_form, &_linear_form_ord)
+    dp.thisptr.add_vector_form(0, &linear_form, &_linear_form_ord)
 
 def set_bc(H1Space space):
     space.thisptr.set_bc_types(&bc_type_ls)
