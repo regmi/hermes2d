@@ -14,10 +14,10 @@
 from hermes2d import Mesh, MeshView, VectorView, OrderView, H1Shapeset, PrecalcShapeset, H1Space, \
         WeakForm, Solution, ScalarView, LinSystem, DummySolver, RefSystem, \
     H1Adapt, H1ProjBasedSelector, CandList, \
-        H2D_EPS_HIGH, H2D_FN_DX, H2D_FN_DY
+        H2D_EPS_HIGH, H2D_FN_DX, H2D_FN_DY, is_HP
 
-from hermes2d.examples.csmooth_aniso-y.py import set_bc, set_forms
-from hermes2d.examples import get_smooth_aniso-y_square_quad
+from hermes2d.examples.csmooth_aniso_y import set_bc, set_forms
+from hermes2d.examples import get_square_quad_mesh_smooth_aniso_y
 
 #  The following parameters can be changed:
 
@@ -55,20 +55,20 @@ H2DRS_DEFAULT_ORDER = -1 # A default order. Used to indicate an unkonwn order or
 
 # Load the mesh.
 mesh = Mesh()
-mesh.load(get_smooth_aniso-y_square_quad.())        
+mesh.load(get_square_quad_mesh_smooth_aniso_y())        
 
 # Avoid zero ndof situation.
 if (P_INIT == 1):
-    if (is_hp(CAND_LIST)):
-        P_INIT++
+    if (is_HP(CAND_LIST)):
+        P_INIT += 1
     else:
         mesh.refine_element(0, 2)
 
 # Create an H1 space with default shapeset
 space = H1Space(mesh, P_INIT)
 set_bc(space)
-if (is_p_aniso(CAND_LIST)):
-    space.set_element_order(0, H2D_MAKE_QUAD_ORDER(1, P_INIT))
+#if (is_P_ANISO(CAND_LIST)):
+#    space.set_element_order(0, H2D_MAKE_QUAD_ORDER(1, P_INIT))
 
 # Initialize the weak formulation
 wf = WeakForm()
@@ -96,7 +96,6 @@ while(not done):
     it += 1
 
     # Assemble and solve the fine mesh problem.
-    info("Solving on fine mesh.");
     rs = RefSystem(ls)
     rs.assemble()
     rs.solve_system(sln_fine, lib="hermes")
@@ -110,8 +109,8 @@ while(not done):
         ls.project_global(sln_fine, sln_coarse)
 
     # Calculate error wrt. exact solution.
-    exact = exact(mesh, fndd)
-    err_exact = h1_error(sln_coarse, exact) * 100
+    #exact = exact(mesh, fndd)
+    #err_exact = h1_error(sln_coarse, exact) * 100
 
     # View the solution and mesh.
     sview.show(sln_coarse)
