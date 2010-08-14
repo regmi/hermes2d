@@ -19,7 +19,7 @@ from hermes2d import (Mesh, MeshView, H1Shapeset, PrecalcShapeset, H1Space,
         WeakForm, Solution, DummySolver, LinSystem, ScalarView, RefSystem,
         H1Adapt, H1ProjBasedSelector, CandList, \
     set_verbose)
-from hermes2d.examples.c22 import set_bc, set_forms
+from hermes2d.examples.clayer import set_bc, set_forms
 
 #  The following parameters can be changed:
 SOLVE_ON_COARSE_MESH = True   # if true, coarse mesh FE problem is solved in every adaptivity step
