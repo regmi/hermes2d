@@ -29,7 +29,7 @@ tau[4][1] = -1
 cdef extern void fresnl(double xxa, double *ssa, double *cca )
 
 cdef scalar Fder(double u):
-    cplx abc(0.0, c_pi/4)
+    cdef cplx abc(0.0, c_pi/4)
     cdef scalar a = abc
     cdef scalar b = cplx(0.0, u*u)
     cdef scalar d = cplx(0.0, 2.0*u)

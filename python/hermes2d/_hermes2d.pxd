@@ -9,6 +9,7 @@ cdef extern from "math.h":
     double c_pi "M_PI"
 
 cdef extern from "complex.h":
+
     ctypedef struct cplx "std::complex<double>"
 
 cdef extern from "stdlib.h":

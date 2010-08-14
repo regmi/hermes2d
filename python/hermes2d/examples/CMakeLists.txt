@@ -33,15 +33,16 @@ add_example(csmooth_aniso_x)
 add_example(csmooth_aniso_y)
 add_example(clshape)
 add_example(cscreen)
+add_example(cbessel)
 
-install(TARGETS c03 c04 c05 c06 c07 c08 c09 c10 c11 c12 c22 ckellogg cline_singularity csmooth_iso csmooth_aniso_x csmooth_aniso_y clshape cscreen
+install(TARGETS c03 c04 c05 c06 c07 c08 c09 c10 c11 c12 c22 ckellogg cline_singularity csmooth_iso csmooth_aniso_x csmooth_aniso_y clshape cscreen cbessel
             RUNTIME DESTINATION lib/python/hermes2d/examples
             ARCHIVE DESTINATION lib/python/hermes2d/examples
             LIBRARY DESTINATION lib/python/hermes2d/examples
         )
 
 install(FILES __init__.py domain.mesh sample.mesh cylinder4.mesh 07.mesh
-    12.mesh bracket.mesh cathedral.mesh motor.mesh square_quad.mesh ls_square_quad.mesh siso_square_quad.mesh  smooth_aniso-x_square_quad.mesh smooth_aniso-y_square_quad.mesh lshape.mesh screen-quad.mesh
+    12.mesh bracket.mesh cathedral.mesh motor.mesh square_quad.mesh ls_square_quad.mesh siso_square_quad.mesh  smooth_aniso-x_square_quad.mesh smooth_aniso-y_square_quad.mesh lshape.mesh screen-quad.mesh lshape3q.mesh
     DESTINATION lib/python/hermes2d/examples
     )
 
