@@ -23,7 +23,7 @@ from hermes2d import Mesh, MeshView, VectorView, OrderView, H1Shapeset, PrecalcS
         H2D_EPS_HIGH, H2D_FN_DX, H2D_FN_DY
 
 from hermes2d.examples.cscreen import set_bc, set_forms
-from hermes2d.examples import get_screen-quad_mesh
+from hermes2d.examples import get_screen_quad_mesh
 
 # The following parameters can be changed:
 
@@ -92,7 +92,7 @@ selector = H1ProjBasedSelector(CAND_LIST, CONV_EXP, H2DRS_DEFAULT_ORDER)
 
 # Initialize the coarse mesh problem.
 ls = LinSystem(wf)
-ls.set_spaces(space)space)
+ls.set_spaces(space)
 
 # Adaptivity loop:
 it = 1
