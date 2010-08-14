@@ -1,18 +1,17 @@
 #! /usr/bin/env python
 
-#  This is another example that allows you to compare h- and hp-adaptivity from the point of view
-#  of both CPU time requirements and discrete problem size, look at the quality of the a-posteriori
-#  error estimator used by Hermes (exact error is provided), etc. You can also change
-#  the parameter MESH_REGULARITY to see the influence of hanging nodes on the adaptive process.
-#  The problem is made harder for adaptive algorithms by increasing the parameter SLOPE.
+#  This singularly perturbed problem exhibits a thin boundary layer. The
+#  exact solution facilitates convergence studies.
 #
-#  PDE: -Laplace u = f
+#  PDE: -Laplace u + K*K*u = K*K + g(x,y).
 #
-#  Known exact solution, see functions fn() and fndd()
+#  Domain: Square (-1,1)^2.
 #
-#  Domain: unit square (0, 1)x(0, 1), see the file square.mesh
+#  BC:  Homogeneous Dirichlet.
 #
-#  BC:  Dirichlet, given by exact solution
+#  Exact solution: v(x,y) = U(x)U(y) where U(t) = 1 - (exp(K*x)+exp(-K*x))/(exp(K) + exp(-K)) is
+#  the exact solution to the 1D singularly perturbed problem -u'' + K*K*u = K*K* in (-1,1)
+#  equipped with zero Dirichlet BC.
 
 # Import modules
 from hermes2d import (Mesh, MeshView, H1Shapeset, PrecalcShapeset, H1Space,
@@ -24,7 +23,8 @@ from hermes2d.examples.c22 import set_bc, set_forms
 #  The following parameters can be changed:
 SOLVE_ON_COARSE_MESH = True   # if true, coarse mesh FE problem is solved in every adaptivity step
 INIT_REF_NUM = 1               # Number of initial uniform mesh refinements
-P_INIT = 2              # Initial polynomial degree of all mesh elements.
+INIT_REF_NUM_BDY = 3           # Number of initial mesh refinements towards the boundary.
+P_INIT = 1              # Initial polynomial degree of all mesh elements.
 THRESHOLD = 0.3         # This is a quantitative parameter of the adapt(...) function and
                         # it has different meanings for various adaptive strategies (see below).
 STRATEGY = 0            # Adaptive strategy:
@@ -39,7 +39,7 @@ STRATEGY = 0            # Adaptive strategy:
 CAND_LIST = CandList.H2D_HP_ANISO  # Predefined list of element refinement candidates.
                         # Possible values are are attributes of the class CandList:
                         # P_ISO, P_ANISO, H_ISO, H_ANISO, HP_ISO, HP_ANISO_H, HP_ANISO_P, HP_ANISO
-                        # See the Sphinx tutorial (http://hpfem.org/hermes2d/doc/src/tutorial-2.html#adaptive-h-fem-and-hp-fem) for details.
+                        # See the Sphinx tutorial (http:#hpfem.org/hermes2d/doc/src/tutorial-2.html#adaptive-h-fem-and-hp-fem) for details.
 MESH_REGULARITY = -1    # Maximum allowed level of hanging nodes:
                             # MESH_REGULARITY = -1 ... arbitrary level hangning nodes (default),
                             # MESH_REGULARITY = 1 ... at most one-level hanging nodes,
@@ -49,29 +49,17 @@ MESH_REGULARITY = -1    # Maximum allowed level of hanging nodes:
 CONV_EXP = 0.5
 ERR_STOP = 0.1         # Stopping criterion for adaptivity (rel. error tolerance between the
                             # fine mesh and coarse mesh solution in percent).
-NDOF_STOP = 60000       # Adaptivity process stops when the number of degrees of freedom grows
+NDOF_STOP = 100000       # Adaptivity process stops when the number of degrees of freedom grows
                             # over this limit. This is to prevent h-adaptivity to go on forever.
 
 H2DRS_DEFAULT_ORDER = -1 # A default order. Used to indicate an unkonwn order or a maximum support order
 
 # Problem parameters.
-SLOPE = 60           # Slope of the layer.
+K = 100           # Slope of the layer.
 
 # Load the mesh
 mesh = Mesh()
-mesh.create([
-        [0, 0],
-        [1, 0],
-        [1, 1],
-        [0, 1],
-    ], [
-        [2, 3, 0, 1, 0],
-    ], [
-        [0, 1, 1],
-        [1, 2, 1],
-        [2, 3, 1],
-        [3, 0, 1],
-    ], [])
+mesh.load(get_square.mesh())
 
 # Perform initial mesh refinements
 for i in range(INIT_REF_NUM): 
