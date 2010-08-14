@@ -127,3 +127,11 @@ def get_lshape_mesh():
     this_dir = os.path.dirname(os.path.abspath(__file__))
     mesh = os.path.join(this_dir, "lshape.mesh")
     return os.path.normpath(mesh)    
+
+def get_screen_quad_mesh():
+    """
+    Returns an example mesh, that is distributed with hermes2d.
+    """
+    this_dir = os.path.dirname(os.path.abspath(__file__))
+    mesh = os.path.join(this_dir, "screen-quad.mesh")
+    return os.path.normpath(mesh)

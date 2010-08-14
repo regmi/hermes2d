@@ -1,5 +1,5 @@
 from hermes2d._hermes2d cimport scalar, FuncReal, GeomReal, WeakForm, \
-        int_grad_u_grad_v, int_grad_u_grad_v_ord, int_v, int_v_ord, malloc, ExtDataReal, c_Ord, create_Ord, \
+        int_curl_e_curl_f, int_e_f, int_grad_u_grad_v_ord, int_v, int_v_ord, malloc, ExtDataReal, c_Ord, create_Ord, \
         FuncOrd, GeomOrd, ExtDataOrd, int_u_v, int_u_v_ord, BC_NATURAL, BC_ESSENTIAL, c_BCType, \
         H1Space
 
@@ -21,8 +21,8 @@ cdef scalar essential_bc_values(int ess_bdy_marker, double x, double y):
 
 cdef scalar bilinear_form(int n, double *wt, FuncReal **t, FuncReal *u, FuncReal *v, GeomReal
         *e, ExtDataReal *ext):
-    return int_grad_u_grad_v(n, wt, u, v)
-
+    return 1.0/mu_r * int_curl_e_curl_f(n, wt, u, v) - sqr(kappa) * int_e_f(n, wt, u, v)
+    
 cdef scalar bilinear_form_surf_bessel(int n, double *wt, FuncReal **t, FuncReal *u, FuncReal *v,
         GeomReal *e, ExtDataReal *ext):
     if e.marker != 1:
