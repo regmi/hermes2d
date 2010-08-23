@@ -26,7 +26,7 @@ from hermes2d.examples import get_lshape3q_mesh
 #  The following parameters can be changed:
 
 SOLVE_ON_COARSE_MESH = True # If true, coarse mesh FE problem is solved in every adaptivity step.
-                                         # If false, projection of the fine mesh solution on the coarse mesh is used. 
+                                         # If false, projection of the fine mesh solution on the coarse mesh is used.
 INIT_REF_NUM = 1              # Number of initial uniform mesh refinements.
 P_INIT = 2                    # Initial polynomial degree. NOTE: The meaning is different from
                                          # standard continuous elements in the space H1. Here, P_INIT refers
@@ -79,7 +79,7 @@ wf = WeakForm()
 set_forms(wf)
 
 # Initialize views.
-ordview = OrderView("Coarse mesh", 600, 0, 600, 500)
+ordview = OrderView()
 #vecview = VectorView("Electric Field - VectorView", 0, 0, 600, 500)
 
 # Initialize refinement selector.
@@ -87,7 +87,7 @@ selector = H1ProjBasedSelector(CAND_LIST, CONV_EXP, H2DRS_DEFAULT_ORDER)
 
 # Initialize the coarse mesh problem.
 ls = LinSystem(wf)
-ls.set_spaces(space)space)
+ls.set_spaces(space)
 
 # Adaptivity loop:
 it = 1
@@ -98,13 +98,13 @@ sln_fine = Solution()
 while(not done):
     print("\n---- Adaptivity step %d ----\n" % it)
     it += 1
-    
+
     # Assemble and solve the fine mesh problem.
     rs = RefSystem(ls)
     rs.assemble()
     rs.solve_system(sln_fine, lib="hermes")
 
-    # Either solve on coarse mesh or project the fine mesh solution 
+    # Either solve on coarse mesh or project the fine mesh solution
     # on the coarse mesh.
     if SOLVE_ON_COARSE_MESH:
         ls.assemble()
@@ -116,7 +116,7 @@ while(not done):
     ex = Solution()
     ex.set_exact(mesh, exact);
     err_exact = 100 * ex.hcurl_error(sln_coarse, ex)
-    
+
     # Show real part of the solution and mesh.
     ordview.show(space)
     real = RealFilter(sln_coarse)
@@ -138,5 +138,5 @@ while(not done):
         if (ls.get_num_dofs() >= NDOF_STOP):
             done = True
 
-  # Show the fine mesh solution - the final result
-  vecview.show(sln_fine)
+# Show the fine mesh solution - the final result
+vecview.show(sln_fine)

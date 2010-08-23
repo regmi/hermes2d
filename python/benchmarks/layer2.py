@@ -62,7 +62,7 @@ mesh = Mesh()
 mesh.load(get_square.mesh())
 
 # Perform initial mesh refinements
-for i in range(INIT_REF_NUM): 
+for i in range(INIT_REF_NUM):
     mesh.refine_all_elements()
 
 # Create an H1 space with default shapeset
@@ -92,24 +92,23 @@ sln_coarse = Solution()
 sln_fine = Solution()
 
 while (not done):
-    
     # Assemble and solve the fine mesh problem
     rs = RefSystem(ls)
     rs.assemble()
     rs.solve_system(sln_fine)
-    
-    # Either solve on coarse mesh or project the fine mesh solution 
-    # on the coarse mesh.   
+
+    # Either solve on coarse mesh or project the fine mesh solution
+    # on the coarse mesh.
     if SOLVE_ON_COARSE_MESH:
         ls.assemble()
         ls.solve_system(sln_coarse)
     else:
         ls.project_global(sln_fine, sln_coarse)
-    
+
     # View the solution and mesh
     sview.show(sln_coarse);
     mesh.plot(space=space)
-        
+
     # Calculate error estimate wrt. fine mesh solution
     hp = H1Adapt(ls)
     hp.set_solutions([sln_coarse], [sln_fine])
