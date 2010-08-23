@@ -22,7 +22,7 @@ from hermes2d.examples import get_square_quad_mesh_smooth_aniso_x
 #  The following parameters can be changed:
 
 SOLVE_ON_COARSE_MESH = True # If true, coarse mesh FE problem is solved in every adaptivity step.
-                                         # If false, projection of the fine mesh solution on the coarse mesh is used. 
+                                         # If false, projection of the fine mesh solution on the coarse mesh is used.
 P_INIT = 1                          # Initial polynomial degree of all mesh elements.
 THRESHOLD = 0.3            # This is a quantitative parameter of the adapt(...) function and
                                          # it has different meanings for various adaptive strategies (see below).
@@ -51,12 +51,12 @@ ERR_STOP = 1e-4            # Stopping criterion for adaptivity (rel. error toler
                                          # fine mesh and coarse mesh solution in percent).
 NDOF_STOP = 60000             # Adaptivity process stops when the number of degrees of freedom grows
                                          # over this limit. This is to prevent h-adaptivity to go on forever.
-                                         
+
 H2DRS_DEFAULT_ORDER = -1 # A default order. Used to indicate an unkonwn order or a maximum support order
 
 # Load the mesh.
 mesh = Mesh()
-mesh.load(get_square_quad_mesh_smooth_aniso_x())        
+mesh.load(get_square_quad_mesh_smooth_aniso_x())
 
 # Avoid zero ndof situation.
 if (P_INIT == 1):
@@ -101,7 +101,7 @@ while(not done):
     rs.assemble()
     rs.solve_system(sln_fine)
 
-    # Either solve on coarse mesh or project the fine mesh solution 
+    # Either solve on coarse mesh or project the fine mesh solution
     # on the coarse mesh.
     if SOLVE_ON_COARSE_MESH:
         ls.assemble()

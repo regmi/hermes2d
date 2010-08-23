@@ -22,7 +22,7 @@ from hermes2d.examples import get_square_quad_mesh_smooth_aniso_y
 #  The following parameters can be changed:
 
 SOLVE_ON_COARSE_MESH = True # If true, coarse mesh FE problem is solved in every adaptivity step.
-                                         # If false, projection of the fine mesh solution on the coarse mesh is used. 
+                                         # If false, projection of the fine mesh solution on the coarse mesh is used.
 P_INIT = 1                          # Initial polynomial degree of all mesh elements.
 THRESHOLD = 0.3            # This is a quantitative parameter of the adapt(...) function and
                                          # it has different meanings for various adaptive strategies (see below).
@@ -55,7 +55,7 @@ H2DRS_DEFAULT_ORDER = -1 # A default order. Used to indicate an unkonwn order or
 
 # Load the mesh.
 mesh = Mesh()
-mesh.load(get_square_quad_mesh_smooth_aniso_y())        
+mesh.load(get_square_quad_mesh_smooth_aniso_y())
 
 # Avoid zero ndof situation.
 if (P_INIT == 1):
@@ -75,8 +75,8 @@ wf = WeakForm()
 set_forms(wf)
 
 # Initialize views.
-sview = ScalarView("Coarse mesh solution", 0, 0, 440, 350)
-oview = OrderView("Coarse mesh", 450, 0, 400, 350)
+sview = ScalarView()
+oview = OrderView()
 
 # Initialize refinement selector.
 selector = H1ProjBasedSelector(CAND_LIST, CONV_EXP, H2DRS_DEFAULT_ORDER)
@@ -100,7 +100,7 @@ while(not done):
     rs.assemble()
     rs.solve_system(sln_fine, lib="hermes")
 
-    # Either solve on coarse mesh or project the fine mesh solution 
+    # Either solve on coarse mesh or project the fine mesh solution
     # on the coarse mesh.
     if SOLVE_ON_COARSE_MESH:
         ls.assemble()

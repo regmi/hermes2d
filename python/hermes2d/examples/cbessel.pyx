@@ -30,7 +30,7 @@ cdef scalar bilinear_form_surf_bessel(int n, double *wt, FuncReal **t, FuncReal 
 cdef scalar linear_form_surf_bessel(int n, double *wt, FuncReal **t, FuncReal *v, GeomReal *e,
         ExtDataReal *ext):
     scalar result = 0
-    for (int i = 0; i < n; i++):
+    for i in range(n):
         cdef double r = c_sqrt(e->x[i] * e->x[i] + e->y[i] * e->y[i])
         cdef double theta = c_atan2(e->y[i], e->x[i])
         if (theta < 0):
