@@ -32,10 +32,10 @@ add_example(csmooth_iso)
 add_example(csmooth_aniso_x)
 add_example(csmooth_aniso_y)
 add_example(clshape)
-add_example(cscreen)
-add_example(cbessel)
+#add_example(cscreen)
+#add_example(cbessel)
 
-install(TARGETS c03 c04 c05 c06 c07 c08 c09 c10 c11 c12 clayer ckellogg cline_singularity csmooth_iso csmooth_aniso_x csmooth_aniso_y clshape cscreen cbessel
+install(TARGETS c03 c04 c05 c06 c07 c08 c09 c10 c11 c12 clayer ckellogg cline_singularity csmooth_iso csmooth_aniso_x csmooth_aniso_y clshape
             RUNTIME DESTINATION lib/python/hermes2d/examples
             ARCHIVE DESTINATION lib/python/hermes2d/examples
             LIBRARY DESTINATION lib/python/hermes2d/examples
