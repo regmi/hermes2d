@@ -1,6 +1,6 @@
 from hermes2d._hermes2d cimport scalar, FuncReal, GeomReal, WeakForm, \
         int_grad_u_grad_v, int_v, malloc, ExtDataReal, c_Ord, create_Ord, \
-        FuncOrd, GeomOrd, ExtDataOrd, H1Space, BC_ESSENTIAL, BC_NATURAL, c_BCType, \
+        FuncOrd, GeomOrd, ExtDataOrd, H1Space, BC_ESSENTIAL, BC_NATURAL, c_BCType, H2D_SYM, \
         c_atan, c_pi, c_sqrt, c_sqr, int_F_v, int_grad_u_grad_v_ord
 from hermes2d._hermes2d cimport int_F_v_ord
 

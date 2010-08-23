@@ -8,9 +8,9 @@ cdef extern from "math.h":
     double c_sin "sin"(double x)    
     double c_pi "M_PI"
 
-cdef extern from "complex.h":
+#cdef extern from "complex.h":
 
-    ctypedef struct cplx "std::complex<double>"
+#    ctypedef struct cplx "std::complex<double>"
 
 cdef extern from "stdlib.h":
 
@@ -423,11 +423,11 @@ cdef extern from "hermes2d.h":
     double int_dudy_dvdy "int_dudy_dvdy<double, double>"(...)
     double int_dudy_dvdx "int_dudy_dvdx<double, double>"(...)
     
-    double int_curl_e_eurl_f "int_curl_e_eurl_f<double, double>"(int n,
-            double *wt, FuncReal *u, FuncReal *v)
-    double int_e_tau_f_tau "int_e_tau_f_tau<double, double>"(int n,
-            double *wt, FuncReal *u, FuncReal *v, GeomReal *e)
-    double int_e_f "int_e_f<double, double>"(int n, double *wt, FuncReal *u, FuncReal *v)
+    #double int_curl_e_eurl_f "int_curl_e_eurl_f<double, double>"(int n,
+    #        double *wt, FuncReal *u, FuncReal *v)
+    #double int_e_tau_f_tau "int_e_tau_f_tau<double, double>"(int n,
+    #        double *wt, FuncReal *u, FuncReal *v, GeomReal *e)
+    #double int_e_f "int_e_f<double, double>"(int n, double *wt, FuncReal #*u, FuncReal *v)
 
     cdef struct c_View "View":
         void set_title(char *title)
