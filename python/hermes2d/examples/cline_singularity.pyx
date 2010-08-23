@@ -7,6 +7,7 @@ from hermes2d._hermes2d cimport scalar, FuncReal, GeomReal, WeakForm, \
 cdef double K = c_pi/2
 cdef double ALPHA = 2.01
 
+# Exact solution
 cdef double fn(double x, double y):
     if (x <= 0):
         return c_cos(K*y)
@@ -14,18 +15,12 @@ cdef double fn(double x, double y):
         return c_cos(K*y) + (x ** ALPHA)
 
 cdef double fndd(double x, double y, double& dx, double& dy):
-  if (x <= 0):
-      dx = 0
-  else:
-      dx = ALPHA * (x ** (ALPHA - 1))
-  dy = -c_sin(K*y)*K
-  return fn(x, y)
-
-cdef scalar rhs(scalar x, scalar y):
-    if (x < 0):
-        return fn(x, y)*K*K
+    if (x <= 0):
+         dx = 0
     else:
-        return fn(x, y)*K*K-ALPHA*(ALPHA-1)*(x ** (ALPHA - 2.0)) - K*K*(x ** ALPHA)
+         dx = ALPHA * (x ** (ALPHA - 1))
+    dy = -c_sin(K*y)*K
+    return fn(x, y)
 
 # Boundary condition types
 cdef c_BCType bc_type_ls(int marker):
@@ -37,8 +32,14 @@ cdef c_BCType bc_type_ls(int marker):
 # Essential (Dirichlet) boundary condition values.
 cdef scalar essential_bc_values(int ess_bdy_marker, double x, double y):
     return fn(x, y)
+    
+cdef scalar rhs(scalar x, scalar y):
+    if (x < 0):
+        return fn(x, y)*K*K
+    else:
+        return fn(x, y)*K*K-ALPHA*(ALPHA-1)*(x ** (ALPHA - 2.0)) - K*K*(x ** ALPHA)
 
-cdef scalar bilinear_form(int n, double *wt, FuncReal **t, FuncReal *u, FuncReal *v, GeomReal
+cdef scalar bilinear_form(int n, double *wt, FuncReal **t, FuncReal *u, FuncReal *v, GeomReal 
         *e, ExtDataReal *ext):
     return int_grad_u_grad_v(n, wt, u, v)
 
