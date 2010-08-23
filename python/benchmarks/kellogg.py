@@ -13,9 +13,9 @@
 #  BC:  Dirichlet given by exact solution.
 
 # Import modules
-from hermes2d import Mesh, MeshView, VectorView, OrderView, H1Shapeset, PrecalcShapeset, H1Space, \
-        WeakForm, Solution, ScalarView, LinSystem, DummySolver, RefSystem, \
-    H1Adapt, H1ProjBasedSelector, CandList, \
+from hermes2d import Mesh, MeshView, VectorView, OrderView, H1Shapeset, \
+        PrecalcShapeset, H1Space, WeakForm, Solution, ScalarView, LinSystem, \
+        DummySolver, RefSystem, H1Adapt, H1ProjBasedSelector, CandList, \
         H2D_EPS_HIGH, H2D_FN_DX, H2D_FN_DY
 
 from hermes2d.examples.ckellogg import set_bc, set_forms
@@ -23,11 +23,11 @@ from hermes2d.examples import get_square_quad_mesh
 
 #  The following parameters can be changed:
 
-SOLVE_ON_COARSE_MESH = True # If true, coarse mesh FE problem is solved in every adaptivity step.
+SOLVE_ON_COARSE_MESH = True   # If true, coarse mesh FE problem is solved in every adaptivity step.
                                          # If false, projection of the fine mesh solution on the coarse mesh is used.
 INIT_REF_NUM = 1              # Number of initial mesh refinements.
 P_INIT = 2                    # Initial polynomial degree of all mesh elements.
-THRESHOLD = 0.3            # This is a quantitative parameter of the adapt(...) function and
+THRESHOLD = 0.3               # This is a quantitative parameter of the adapt(...) function and
                                          # it has different meanings for various adaptive strategies (see below).
 STRATEGY = 0                  # Adaptive strategy:
                                          # STRATEGY = 0 ... refine elements until sqrt(THRESHOLD) times total
@@ -48,14 +48,14 @@ MESH_REGULARITY = -1          # Maximum allowed level of hanging nodes:
                                          # MESH_REGULARITY = 2 ... at most two-level hanging nodes, etc.
                                          # Note that regular meshes are not supported, this is due to
                                          # their notoriously bad performance.
-CONV_EXP = 1.0             # Default value is 1.0. This parameter influences the selection of
+CONV_EXP = 1.0               # Default value is 1.0. This parameter influences the selection of
                                          # cancidates in hp-adaptivity. See get_optimal_refinement() for details.
-ERR_STOP = 3.0             # Stopping criterion for adaptivity (rel. error tolerance between the
+ERR_STOP = 3.0               # Stopping criterion for adaptivity (rel. error tolerance between the
                                          # fine mesh and coarse mesh solution in percent).
-NDOF_STOP = 100000            # Adaptivity process stops when the number of degrees of freedom grows
+NDOF_STOP = 100000           # Adaptivity process stops when the number of degrees of freedom grows
                                          # over this limit. This is to prevent h-adaptivity to go on forever.
 
-H2DRS_DEFAULT_ORDER = -1 # A default order. Used to indicate an unkonwn order or a maximum support order
+H2DRS_DEFAULT_ORDER = -1     # A default order. Used to indicate an unkonwn order or a maximum support order
 
 # Load the mesh.
 mesh = Mesh()
@@ -95,6 +95,7 @@ while(not done):
     it += 1
 
     # Assemble and solve the fine mesh problem.
+    print("Solving on fine mesh.") 
     rs = RefSystem(ls)
     rs.assemble()
     rs.solve_system(sln_fine, lib="hermes")
@@ -102,9 +103,11 @@ while(not done):
     # Either solve on coarse mesh or project the fine mesh solution
     # on the coarse mesh.
     if SOLVE_ON_COARSE_MESH:
+        print("Solving on coarse mesh.")
         ls.assemble()
         ls.solve_system(sln_coarse)
     else:
+        print("Projecting fine mesh solution on coarse mesh.")
         ls.project_global(sln_fine, sln_coarse)
 
     # View the solution and mesh.
@@ -112,19 +115,20 @@ while(not done):
     mesh.plot(space)
 
     # Calculate error estimate wrt. fine mesh solution.
+    print("Calculating error (est).")
     hp = H1Adapt(ls)
     hp.set_solutions([sln_coarse], [sln_fine])
     err_est = hp.calc_error() * 100
-    #print("Error estimate: %d" % err_est)
 
     # If err_est too large, adapt the mesh.
     if (err_est < ERR_STOP):
         done = True
     else:
         done = hp.adapt(selector, THRESHOLD, STRATEGY, MESH_REGULARITY)
-
         if (ls.get_num_dofs() >= NDOF_STOP):
             done = True
 
 # Show the fine mesh solution - the final result.
+#sview.set_title("Final solution")
+sview.show_mesh(False)
 sview.show(sln_fine)

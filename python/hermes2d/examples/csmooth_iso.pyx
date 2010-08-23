@@ -29,7 +29,7 @@ cdef scalar bilinear_form(int n, double *wt, FuncReal **t, FuncReal *u, FuncReal
 
 cdef scalar linear_form(int n, double *wt, FuncReal **t, FuncReal *v,
         GeomReal *e, ExtDataReal *ext):
-    return int_F_v(n, wt, &rhs, v, e)
+    return int_F_v(n, wt, rhs, v, e)
     
 cdef c_Ord _order_bf(int n, double *wt, FuncOrd **t, FuncOrd *u, FuncOrd *v, GeomOrd
         *e, ExtDataOrd *ext):
