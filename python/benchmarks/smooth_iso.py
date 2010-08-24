@@ -129,6 +129,5 @@ while (not done):
     else:
         print("Adapting the coarse mesh.")
         done = hp.adapt(selector, THRESHOLD, STRATEGY, MESH_REGULARITY)
-
         if (ls.get_num_dofs() >= NDOF_STOP):
             done = True

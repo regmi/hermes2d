@@ -17,45 +17,42 @@
 # Import modules
 from hermes2d import (Mesh, MeshView, H1Shapeset, PrecalcShapeset, H1Space,
         WeakForm, Solution, DummySolver, LinSystem, ScalarView, RefSystem,
-        H1Adapt, H1ProjBasedSelector, CandList, \
-    set_verbose)
+        H1Adapt, H1ProjBasedSelector, CandList, set_verbose)
 from hermes2d.examples.clayer import set_bc, set_forms
 
 #  The following parameters can be changed:
-SOLVE_ON_COARSE_MESH = True   # if true, coarse mesh FE problem is solved in every adaptivity step
-INIT_REF_NUM = 1               # Number of initial uniform mesh refinements
-P_INIT = 2              # Initial polynomial degree of all mesh elements.
-THRESHOLD = 0.3         # This is a quantitative parameter of the adapt(...) function and
-                        # it has different meanings for various adaptive strategies (see below).
-STRATEGY = 0            # Adaptive strategy:
-                            # STRATEGY = 0 ... refine elements until sqrt(THRESHOLD) times total
-                            #   error is processed. If more elements have similar errors, refine
-                            #   all to keep the mesh symmetric.
-                            # STRATEGY = 1 ... refine all elements whose error is larger
-                            #   than THRESHOLD times maximum element error.
-                            # STRATEGY = 2 ... refine all elements whose error is larger
-                            #   than THRESHOLD.
-                            # More adaptive strategies can be created in adapt_ortho_h1.cpp.
-CAND_LIST = CandList.H2D_HP_ANISO  # Predefined list of element refinement candidates.
-                        # Possible values are are attributes of the class CandList:
-                        # P_ISO, P_ANISO, H_ISO, H_ANISO, HP_ISO, HP_ANISO_H, HP_ANISO_P, HP_ANISO
-                        # See the Sphinx tutorial (http://hpfem.org/hermes2d/doc/src/tutorial-2.html#adaptive-h-fem-and-hp-fem) for details.
-MESH_REGULARITY = -1    # Maximum allowed level of hanging nodes:
-                            # MESH_REGULARITY = -1 ... arbitrary level hangning nodes (default),
-                            # MESH_REGULARITY = 1 ... at most one-level hanging nodes,
-                            # MESH_REGULARITY = 2 ... at most two-level hanging nodes, etc.
-                            # Note that regular meshes are not supported, this is due to
-                            # their notoriously bad performance.
+SOLVE_ON_COARSE_MESH = True     # if true, coarse mesh FE problem is solved in every adaptivity step
+INIT_REF_NUM = 1                # Number of initial uniform mesh refinements
+P_INIT = 2                      # Initial polynomial degree of all mesh elements.
+THRESHOLD = 0.3                 # This is a quantitative parameter of the adapt(...) function and
+                                    # it has different meanings for various adaptive strategies (see below).
+STRATEGY = 0                    # Adaptive strategy:
+                                    # STRATEGY = 0 ... refine elements until sqrt(THRESHOLD) times total
+                                    #   error is processed. If more elements have similar errors, refine
+                                    #   all to keep the mesh symmetric.
+                                    # STRATEGY = 1 ... refine all elements whose error is larger
+                                    #   than THRESHOLD times maximum element error.
+                                    # STRATEGY = 2 ... refine all elements whose error is larger
+                                    #   than THRESHOLD.
+                                    # More adaptive strategies can be created in adapt_ortho_h1.cpp.
+CAND_LIST = CandList.H2D_HP_ANISO # Predefined list of element refinement candidates.
+                                    # Possible values are are attributes of the class CandList:
+                                    # P_ISO, P_ANISO, H_ISO, H_ANISO, HP_ISO, HP_ANISO_H, HP_ANISO_P, HP_ANISO
+                                    # See the Sphinx tutorial (http://hpfem.org/hermes2d/doc/src/tutorial-2.html#adaptive-h-fem-and-hp-fem) for details.
+MESH_REGULARITY = -1            # Maximum allowed level of hanging nodes:
+                                    # MESH_REGULARITY = -1 ... arbitrary level hangning nodes (default),
+                                    # MESH_REGULARITY = 1 ... at most one-level hanging nodes,
+                                    # MESH_REGULARITY = 2 ... at most two-level hanging nodes, etc.
+                                    # Note that regular meshes are not supported, this is due to
+                                    # their notoriously bad performance.
 CONV_EXP = 0.5
-ERR_STOP = 0.1         # Stopping criterion for adaptivity (rel. error tolerance between the
-                            # fine mesh and coarse mesh solution in percent).
-NDOF_STOP = 60000       # Adaptivity process stops when the number of degrees of freedom grows
-                            # over this limit. This is to prevent h-adaptivity to go on forever.
+ERR_STOP = 0.1                  # Stopping criterion for adaptivity (rel. error tolerance between the
+                                    # fine mesh and coarse mesh solution in percent).
+NDOF_STOP = 60000               # Adaptivity process stops when the number of degrees of freedom grows
+                                    # over this limit. This is to prevent h-adaptivity to go on forever.
 
-H2DRS_DEFAULT_ORDER = -1 # A default order. Used to indicate an unkonwn order or a maximum support order
+H2DRS_DEFAULT_ORDER = -1        # A default order. Used to indicate an unkonwn order or a maximum support order
 
-# Problem parameters.
-SLOPE = 60           # Slope of the layer.
 
 # Load the mesh
 mesh = Mesh()
@@ -87,7 +84,7 @@ set_forms(wf)
 
 # Initialize views
 sview = ScalarView("Solution")
-mview = MeshView("Mesh")
+#mview = MeshView("Mesh")
 
 # Initialize refinement selector
 selector = H1ProjBasedSelector(CAND_LIST, CONV_EXP, H2DRS_DEFAULT_ORDER)

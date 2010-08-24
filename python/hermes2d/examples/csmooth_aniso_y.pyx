@@ -25,7 +25,8 @@ cdef scalar essential_bc_values(int ess_bdy_marker, double x, double y):
     
 cdef double rhs(double x, double y):
     return c_sin(y)
-    
+
+# Weak froms    
 cdef scalar bilinear_form(int n, double *wt, FuncReal **t, FuncReal *u, FuncReal *v, GeomReal
         *e, ExtDataReal *ext):
     return int_grad_u_grad_v(n, wt, u, v)
