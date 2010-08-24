@@ -9,6 +9,14 @@ cdef double fn(double x, double y):
     cdef double a = c_atan2(x, y)
     return (r ** (2.0/3.0)) * c_sin(2.0*a/3.0 + c_pi/3)
 
+cdef double fndd(double x, double y, double& dx, double& dy):
+    cdef double t1 = 2.0/3.0*c_atan2(x, y) + c_pi/3
+    cdef double t2 = (x*x + y*y) ** (1.0/3.0)
+    cdef double t3 = x*x * ((y*y)/(x*x) + 1)
+    dx = 2.0/3.0*x*c_sin(t1)/(t2*t2) + 2.0/3.0*y*t2*c_cos(t1)/t3
+    dy = 2.0/3.0*y*c_sin(t1)/(t2*t2) - 2.0/3.0*x*t2*c_cos(t1)/t3
+    return fn(x, y)
+  
 # Boundary condition types
 cdef c_BCType bc_type_lshape(int marker):
     return <c_BCType>BC_ESSENTIAL

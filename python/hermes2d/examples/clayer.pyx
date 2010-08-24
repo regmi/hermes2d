@@ -4,14 +4,28 @@ from hermes2d._hermes2d cimport scalar, FuncReal, GeomReal, WeakForm, \
         c_atan, c_pi, c_sqrt, c_sqr, int_F_v, int_grad_u_grad_v_ord
 from hermes2d._hermes2d cimport int_F_v_ord
 
+# Problem parameters.
+SLOPE = 60                      # Slope of the layer.
+
 cdef double fn(double x, double y):
-    return c_atan(60 * (c_sqrt(c_sqr(x-1.25) + c_sqr(y+0.25)) - c_pi/3))
+    return c_atan(SLOPE * (c_sqrt(c_sqr(x-1.25) + c_sqr(y+0.25)) - c_pi/3))
+
+cdef double fndd(double x, double y, double& dx, double& dy):
+    cdef double t = c_sqrt(c_sqr(x-1.25) + c_sqr(y+0.25))
+    cdef double u = t * (c_sqr(SLOPE) * c_sqr(t - c_pi/3) + 1)
+    dx = SLOPE * (x-1.25) / u
+    dy = SLOPE * (y+0.25) / u
+    return fn(x, y)
 
 cdef double rhs(double x, double y):
-    cdef double t1 = c_sqrt(16*(x*x + y*y) - 40*x + 8*y + 26)
-    cdef double t2 = 3600*(x*x + y*y) - 9000*x + 1800*y
-    return -(240 * (t2 + 5849 - 400*c_pi*c_pi)) / (t1 * c_sqr(5851 + t2 - \
-              600*t1*c_pi + 400*c_pi*c_pi))
+    cdef double t2 = c_sqr(y + 0.25) + c_sqr(x - 1.25)
+    cdef double t = c_sqrt(t2)
+    cdef double u = (c_sqr(c_pi - 3.0*t)*c_sqr(SLOPE) + 9.0)
+    return 27.0/2.0 * c_sqr(2.0*y + 0.5) * (c_pi - 3.0*t) * (SLOPE ** 3.0) / (c_sqr(u) * t2) + \
+            27.0/2.0 * c_sqr(2.0*x - 2.5) * (c_pi - 3.0*t) * (SLOPE ** 3.0) / (c_sqr(u) * t2) - \
+            9.0/4.0 * c_sqr(2.0*y + 0.5) * SLOPE / (u * (t ** 3.0)) - \
+            9.0/4.0 * c_sqr(2.0*x - 2.5) * SLOPE / (u * (t ** 3.0)) + \
+            18.0 * SLOPE / (u * t)
 
 cdef scalar bilinear_form(int n, double *wt, FuncReal **t, FuncReal *u, FuncReal *v, GeomReal
         *e, ExtDataReal *ext):
