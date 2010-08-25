@@ -44,7 +44,7 @@ install(TARGETS c03 c04 c05 c06 c07 c08 c09 c10 c11 c12 clayer clayer2 ckellogg 
         )
 
 install(FILES __init__.py domain.mesh sample.mesh cylinder4.mesh 07.mesh
-    12.mesh bracket.mesh cathedral.mesh motor.mesh square_quad.mesh ls_square_quad.mesh siso_square_quad.mesh  smooth_aniso-x_square_quad.mesh smooth_aniso-y_square_quad.mesh lshape.mesh screen-quad.mesh lshape3q.mesh
+    12.mesh bracket.mesh cathedral.mesh motor.mesh square_quad.mesh ls_square_quad.mesh siso_square_quad.mesh square.mesh sp_square.mesh smooth_aniso-x_square_quad.mesh smooth_aniso-y_square_quad.mesh lshape.mesh screen-quad.mesh lshape3q.mesh
     DESTINATION lib/python/hermes2d/examples
     )
 

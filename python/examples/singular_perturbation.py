@@ -15,7 +15,7 @@ from hermes2d import Mesh, MeshView, VectorView, OrderView, H1Shapeset, PrecalcS
         H2D_EPS_HIGH, H2D_FN_DX, H2D_FN_DY
 
 from hermes2d.examples.csingular_perturbation import set_bc, set_forms
-from hermes2d.examples import get_square_mesh
+from hermes2d.examples import get_sp_square_mesh
 
 #  The following parameters can be changed:
 
@@ -56,7 +56,7 @@ H2DRS_DEFAULT_ORDER = -1     # A default order. Used to indicate an unkonwn orde
 
 # Load the mesh.
 mesh = Mesh()
-mesh.load(get_square_mesh())
+mesh.load(get_sp_square_mesh())
 
 # Perform initial mesh refinements
 for i in range(INIT_REF_NUM):
