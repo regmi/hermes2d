@@ -1427,10 +1427,6 @@ def test_example_singular_perturbation():
     wf = WeakForm()
     set_forms(wf)
 
-    # Initialize views.
-    sview = ScalarView("Coarse mesh solution")
-    #OrderView  oview("Polynomial orders")
-
     # Initialize refinement selector.
     selector = H1ProjBasedSelector(CAND_LIST, CONV_EXP, H2DRS_DEFAULT_ORDER)
 
@@ -1445,11 +1441,9 @@ def test_example_singular_perturbation():
     sln_fine = Solution()
 
     while(not done):
-        print("\n---- Adaptivity step %d ----\n" % it)
         it += 1
 
         # Assemble and solve the fine mesh problem.
-        print("Solving on fine mesh.") 
         rs = RefSystem(ls)
         rs.assemble()
         rs.solve_system(sln_fine, lib="hermes")
@@ -1457,19 +1451,12 @@ def test_example_singular_perturbation():
         # Either solve on coarse mesh or project the fine mesh solution
         # on the coarse mesh.
         if SOLVE_ON_COARSE_MESH:
-            print("Solving on coarse mesh.")
             ls.assemble()
             ls.solve_system(sln_coarse)
         else:
-            print("Projecting fine mesh solution on coarse mesh.")
             ls.project_global(sln_fine, sln_coarse)
-        
-        # View the solution and mesh.
-        sview.show(sln_coarse)
-        mesh.plot(space)
 
         # Calculate error estimate wrt. fine mesh solution.
-        print("Calculating error (est).")
         hp = H1Adapt(ls)
         hp.set_solutions([sln_coarse], [sln_fine])
         err_est = hp.calc_error() * 100
@@ -1481,8 +1468,3 @@ def test_example_singular_perturbation():
             done = hp.adapt(selector, THRESHOLD, STRATEGY, MESH_REGULARITY)
             if (ls.get_num_dofs() >= NDOF_STOP):
                 done = True
-
-    # Show the fine mesh solution - the final result.
-    #sview.set_title("Final solution")
-    sview.show_mesh(False)
-    sview.show(sln_fine)
