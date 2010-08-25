@@ -24,12 +24,12 @@ cdef scalar bilinear_form(int n, double *wt, FuncReal **t, FuncReal *u, FuncReal
     
 cdef scalar bilinear_form_surf_bessel(int n, double *wt, FuncReal **t, FuncReal *u, FuncReal *v,
         GeomReal *e, ExtDataReal *ext):
-    cplx ii = cplx(0.0, 1.0)
+    cdef cplx ii = cplx(0.0, 1.0)
     return ii * (-kappa) * int_e_tau_f_tau(n, wt, u, v, e)
 
 cdef scalar linear_form_surf_bessel(int n, double *wt, FuncReal **t, FuncReal *v, GeomReal *e,
         ExtDataReal *ext):
-    scalar result = 0
+    cdef scalar result = 0
     for i in range(n):
         cdef double r = c_sqrt(e->x[i] * e->x[i] + e->y[i] * e->y[i])
         cdef double theta = c_atan2(e->y[i], e->x[i])

@@ -1,6 +1,6 @@
 from hermes2d._hermes2d cimport scalar, FuncReal, GeomReal, WeakForm, \
         int_grad_u_grad_v, int_v, malloc, ExtDataReal, c_Ord, create_Ord, \
-        FuncOrd, GeomOrd, ExtDataOrd, H1Space, BC_ESSENTIAL, BC_NATURAL, c_BCType, \
+        FuncOrd, GeomOrd, ExtDataOrd, H1Space, BC_ESSENTIAL, BC_NATURAL, c_BCType, H2D_SYM, \
         c_atan, c_pi, c_exp, c_sqrt, c_sqr, int_F_v, int_grad_u_grad_v_ord
 from hermes2d._hermes2d cimport int_F_v_ord
 
@@ -45,7 +45,7 @@ cdef scalar linear_form(int n, double *wt, FuncReal **t, FuncReal *u, GeomReal
         *e, ExtDataReal *ext):
     return -int_F_v(n, wt, rhs, u, e)
 
-cdef linear_form_ord(int n, double *wt, FuncOrd **t, FuncOrd *u, FuncOrd *v, GeomOrd
+cdef c_Ord linear_form_ord(int n, double *wt, FuncOrd **t, FuncOrd *v, GeomOrd
         *e, ExtDataOrd *ext):
     return create_Ord(24)
     

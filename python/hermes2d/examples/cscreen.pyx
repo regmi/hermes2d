@@ -38,7 +38,7 @@ cdef scalar Fder(double u):
     cdef scalar fres = cplx(c,-s)
     cdef scalar fresder = exp(-b)
     
-    return 0.5*sqrt(M_PI) * exp(b) * ( d * (exp(-a) - sqrt(2.0)*(fres)) - sqrt(2.0)*fresder*sqrt(2.0/M_PI) )
+    return 0.5*sqrt(c_pi) * exp(b) * ( d * (exp(-a) - sqrt(2.0)*(fres)) - sqrt(2.0)*fresder*sqrt(2.0/c_pi) )
   
 cdef scalar der_Hr(double x, double y):
     cdef double r = sqrt(x*x + y*y)

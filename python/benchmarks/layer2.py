@@ -18,6 +18,8 @@ from hermes2d import (Mesh, MeshView, H1Shapeset, PrecalcShapeset, H1Space,
         WeakForm, Solution, DummySolver, LinSystem, ScalarView, RefSystem,
         H1Adapt, H1ProjBasedSelector, CandList, set_verbose)
 from hermes2d.examples.clayer2 import set_bc, set_forms
+from hermes2d.examples import get_square_mesh
+
 
 #  The following parameters can be changed:
 SOLVE_ON_COARSE_MESH = True    # if true, coarse mesh FE problem is solved in every adaptivity step
@@ -55,7 +57,7 @@ H2DRS_DEFAULT_ORDER = -1      # A default order. Used to indicate an unkonwn ord
 
 # Load the mesh
 mesh = Mesh()
-mesh.load(get_square.mesh())
+mesh.load(get_square_mesh())
 
 # Perform initial mesh refinements
 for i in range(INIT_REF_NUM):
