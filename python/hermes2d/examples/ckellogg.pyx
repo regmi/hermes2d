@@ -1,4 +1,4 @@
-from hermes2d._hermes2d cimport scalar, FuncReal, GeomReal, WeakForm, \
+from hermes2d._hermes2d cimport scalar, FuncReal, GeomReal, WeakForm, Mesh, Solution, ExactSolution, \
         int_grad_u_grad_v, int_grad_u_grad_v_ord, int_v, int_v_ord, malloc, ExtDataReal, c_Ord, create_Ord, \
         FuncOrd, GeomOrd, ExtDataOrd, int_u_v, int_u_v_ord, BC_NATURAL, H2D_SYM, BC_ESSENTIAL, c_BCType, H1Space, \
         c_atan, c_pi, c_sqrt, c_sqr, c_atan2, c_cos, c_sin
@@ -86,7 +86,12 @@ cdef double fndd(double x, double y, double& dx, double& dy):
 
     return fn(x,y)
 
-
+def get_err_exact(Mesh m, Solution s):
+    exact = ExactSolution()
+    exact.thisptr.set_exact(m.thisptr, &fndd)
+    cdef double err_exact = h1_error(&s.thisptr, &exact.thisptr) * 100
+    return err_exact
+    
 # Boundary condition types
 cdef c_BCType bc_type_kellogg(int marker):
     return <c_BCType>BC_ESSENTIAL

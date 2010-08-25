@@ -110,6 +110,10 @@ while(not done):
         print("Projecting fine mesh solution on coarse mesh.")
         ls.project_global(sln_fine, sln_coarse)
 
+    # Calculate error wrt. exact solution.
+    print("Calculating error (exact).")
+    err_exact = get_err_exact(mesh, sln_coarse)
+    
     # View the solution and mesh.
     sview.show(sln_coarse)
     mesh.plot(space)

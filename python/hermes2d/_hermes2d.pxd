@@ -312,6 +312,10 @@ cdef extern from "hermes2d.h":
         c_H1Space *get_ref_space(int eq)
     c_RefSystem *new_RefSystem "new RefSystem" (c_LinSystem *ls)
 
+    cdef struct c_ExactSolution "ExactSolution":
+        pass
+    c_ExactSolution *new_ExactSolution "new ExactSolution" (NULL, NULL)
+
     #cdef struct c_DiscreteProblem "DiscreteProblem":
     #    void set_num_equations(int neq)
     #    void set_external_fns(int n, ...)
@@ -396,6 +400,7 @@ cdef extern from "hermes2d.h":
     double int_l2_norm(RealFunction* fu, RefMap* ru)
     double l2_norm(c_MeshFunction* fu)
     double h1_norm(c_MeshFunction* fu)
+    double h1_error(c_MeshFunction* s1, c_MeshFunction* s2)
     double integrate(c_MeshFunction *sln)
     double int_grad_u_grad_v "int_grad_u_grad_v<double, double>"(int n,
             double *wt, FuncReal *u, FuncReal *v)
