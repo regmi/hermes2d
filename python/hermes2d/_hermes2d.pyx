@@ -1335,10 +1335,10 @@ cdef class RefSystem(LinSystem):
     #        )
     #    return H1Space_from_C(r)
 
-cdef class ExactSolution(Solution):
-
-    def __init__(self):
-        self.thisptr = <c_Solution *>new_ExactSolution(NULL, NULL)
+#cdef class ExactSolution(Solution):
+#
+#    def __init__(self):
+#        self.thisptr = <c_Solution *>new_ExactSolution(NULL, NULL)
 
 #cdef class DiscreteProblem:
 #

@@ -312,9 +312,9 @@ cdef extern from "hermes2d.h":
         c_H1Space *get_ref_space(int eq)
     c_RefSystem *new_RefSystem "new RefSystem" (c_LinSystem *ls)
 
-    cdef struct c_ExactSolution "ExactSolution":
-        pass
-    c_ExactSolution *new_ExactSolution "new ExactSolution" (NULL, NULL)
+    #cdef struct c_ExactSolution "ExactSolution":
+    #    pass
+    #c_ExactSolution *new_ExactSolution "new ExactSolution" (NULL, NULL)
 
     #cdef struct c_DiscreteProblem "DiscreteProblem":
     #    void set_num_equations(int neq)
