@@ -38,13 +38,30 @@ cdef c_BCType bc_type_bracket(int marker):
 cdef scalar essential_bc_values(int ess_bdy_marker, double x, double y):
     return 0
 
-cdef scalar bilinear_form_I_III(int n, double *wt, FuncReal **t, FuncReal *u, FuncReal *v, GeomReal
-        *e, ExtDataReal *ext):
-    return R * int_grad_u_grad_v(n, wt, u, v)
 
-cdef scalar bilinear_form_II_IV(int n, double *wt, FuncReal **t, FuncReal *u, FuncReal *v,
-        GeomReal *e, ExtDataReal *ext):
-    return 1.0 * int_grad_u_grad_v(n, wt, u, v)
+cdef scalar bilinear_form_0_0(int n, double *wt, FuncReal **t, FuncReal *u, FuncReal *v, GeomReal
+        *e, ExtDataReal *ext):
+    return (lamda + 2*mu) * int_dudx_dvdx(n, wt, u, v) +
+                      mu * int_dudy_dvdy(n, wt, u, v)
+
+cdef scalar bilinear_form_0_1(int n, double *wt, FuncReal **t, FuncReal *u, FuncReal *v, GeomReal
+        *e, ExtDataReal *ext):
+    return lamda * int_dudy_dvdx(n, wt, u, v) +
+             mu * int_dudx_dvdy(n, wt, u, v)
+
+cdef scalar bilinear_form_1_0(int n, double *wt, FuncReal **t, FuncReal *u, FuncReal *v, GeomReal
+        *e, ExtDataReal *ext):
+    return mu * int_dudy_dvdx(n, wt, u, v) +
+         lamda * int_dudx_dvdy(n, wt, u, v)
+
+cdef scalar bilinear_form_1_1(int n, double *wt, FuncReal **t, FuncReal *u, FuncReal *v, GeomReal
+        *e, ExtDataReal *ext):
+    return mu * int_dudx_dvdx(n, wt, u, v) +
+         (lamda + 2*mu) * int_dudy_dvdy(n, wt, u, v)
+
+cdef scalar linear_form_surf_1(int n, double *wt, FuncReal **t, FuncReal *u, FuncReal *v, GeomReal
+        *e, ExtDataReal *ext):
+    return -f * int_v(n, wt, v)
     
 cdef c_Ord _order_bf(int n, double *wt, FuncOrd **t, FuncOrd *u, FuncOrd *v, GeomOrd
         *e, ExtDataOrd *ext):
@@ -58,7 +75,7 @@ def set_bc(H1Space space):
     space.thisptr.set_bc_types(&bc_type_kellogg)
     space.thisptr.set_essential_bc_values(&essential_bc_values)
 
-wf.add_matrix_form(0, 0, callback(bilinear_form_0_0), H2D_SYM);  # note that only one symmetric part is
+wf.add_matrix_form(0, 0, &bilinear_form_0_0, &_order_bf,  H2D_SYM);  # note that only one symmetric part is
 wf.add_matrix_form(0, 1, callback(bilinear_form_0_1), H2D_SYM);  # added in the case of symmetric bilinear
 wf.add_matrix_form(1, 1, callback(bilinear_form_1_1), H2D_SYM);  # forms
 wf.add_vector_form_surf(1, callback(linear_form_surf_1), BDY_TOP);

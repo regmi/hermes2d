@@ -56,12 +56,12 @@ ERR_STOP = 0.5             # Stopping criterion for adaptivity (rel. error toler
                                          # fine mesh and coarse mesh solution in percent).
 NDOF_STOP = 60000             # Adaptivity process stops when the number of degrees of freedom grows over
                                          # this limit. This is mainly to prevent h-adaptivity to go on forever.
+H2DRS_DEFAULT_ORDER = -1     # A default order. Used to indicate an unkonwn order or a maximum support order
 
 # Load the mesh.
 xmesh = Mesh()
 ymesh = Mesh()
 xmesh.load(get_bracket_mesh())
-
 
 # Initial mesh refinements.
 xmesh.refine_element(1)
@@ -106,8 +106,9 @@ y_sln_fine = Solution()
 
 while(not done):
     print("\n---- Adaptivity step %d ----\n" % it)
+    it += 1
 
-# Assemble and solve the fine mesh problem.
+    # Assemble and solve the fine mesh problem.
     rs = RefSystem(ls)
     rs.assemble()
     rs.solve_system(sln_fine, lib="hermes")
@@ -134,51 +135,27 @@ while(not done):
 cpu_time.tick(HERMES_SKIP);
 
 # Calculate element errors and total error estimate.
-info("Calculating error (est).");
-H1Adapt hp(&ls);
-hp.set_solutions(Tuple<Solution*>(&x_sln_coarse, &y_sln_coarse), Tuple<Solution*>(&x_sln_fine, &y_sln_fine));
-hp.set_error_form(0, 0, bilinear_form_0_0<scalar, scalar>, bilinear_form_0_0<Ord, Ord>);
-hp.set_error_form(0, 1, bilinear_form_0_1<scalar, scalar>, bilinear_form_0_1<Ord, Ord>);
-hp.set_error_form(1, 0, bilinear_form_1_0<scalar, scalar>, bilinear_form_1_0<Ord, Ord>);
-hp.set_error_form(1, 1, bilinear_form_1_1<scalar, scalar>, bilinear_form_1_1<Ord, Ord>);
-double err_est = hp.calc_error(H2D_TOTAL_ERROR_REL | H2D_ELEMENT_ERROR_REL) * 100;
+print("Calculating error (est).")
+hp = H1Adapt(ls)
+"""
+hp.set_solutions(Tuple<Solution*>(&x_sln_coarse, &y_sln_coarse), Tuple<Solution*>(&x_sln_fine, &y_sln_fine))
+hp.set_error_form(0, 0, bilinear_form_0_0<scalar, scalar>, bilinear_form_0_0<Ord, Ord>)
+hp.set_error_form(0, 1, bilinear_form_0_1<scalar, scalar>, bilinear_form_0_1<Ord, Ord>)
+hp.set_error_form(1, 0, bilinear_form_1_0<scalar, scalar>, bilinear_form_1_0<Ord, Ord>)
+hp.set_error_form(1, 1, bilinear_form_1_1<scalar, scalar>, bilinear_form_1_1<Ord, Ord>)
+double err_est = hp.calc_error(H2D_TOTAL_ERROR_REL | H2D_ELEMENT_ERROR_REL) * 100
+"""
 
-# Report results.
-info("ndof_x_coarse: %d, ndof_x_fine: %d", 
-     ls.get_num_dofs(0), rs.get_num_dofs(0));
-info("ndof_y_coarse: %d, ndof_y_fine: %d", 
-     ls.get_num_dofs(1), rs.get_num_dofs(1));
-info("ndof: %d, err_est: %g%%", ls.get_num_dofs(), err_est);
-
-# Add entry to DOF convergence graph.
-graph_dof.add_values(ls.get_num_dofs(), err_est);
-graph_dof.save("conv_dof.dat");
-
-# Add entry to CPU convergence graph.
-graph_cpu.add_values(cpu_time.accumulated(), err_est);
-graph_cpu.save("conv_cpu.dat");
-
-# If err_est too large, adapt the mesh.
-if (err_est < ERR_STOP) done = true;
-else {
-  info("Adapting the coarse mesh.");
-  done = hp.adapt(&selector, THRESHOLD, STRATEGY, MESH_REGULARITY);
-  if (ls.get_num_dofs() >= NDOF_STOP) done = true;
-}
-
-as++;
-}
-while (!done);
-verbose("Total running time: %g s", cpu_time.accumulated());
+    # If err_est too large, adapt the mesh.
+    if (err_est < ERR_STOP):
+        done = True
+    else:
+        print("Adapting the coarse mesh.")
+        done = hp.adapt(selector, THRESHOLD, STRATEGY, MESH_REGULARITY)
+        if (ls.get_num_dofs() >= NDOF_STOP):
+            done = True
 
 # Show the fine mesh solution - the final result
-VonMisesFilter stress_fine(&x_sln_fine, &y_sln_fine, mu, lambda);
-sview.set_title("Fine mesh solution");
-sview.set_min_max_range(0, 3e4);
-sview.show_mesh(false);
-sview.show(&stress_fine);
-
-# Wait for all views to be closed.
-View::wait();
-return 0;
-}
+#VonMisesFilter stress_fine(&x_sln_fine, &y_sln_fine, mu, lambda);
+sview.show_mesh(false)
+sview.show(stress_fine)
