@@ -1306,6 +1306,18 @@ cdef class LinSystem:
 
     def get_num_dofs(self):
         self.thisptr.get_num_dofs()
+        
+    def project_global(self, *args):
+        """
+        Solves the linear system using scipy.
+        """
+        cdef int n = len(args)
+
+        cdef Solution s0, s1
+
+        if n == 2:
+            s0, s1 = args
+            self.thisptr.project_global2(n, s1.thisptr, s0.thisptr)
 
 cdef class RefSystem(LinSystem):
 

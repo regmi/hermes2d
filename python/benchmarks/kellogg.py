@@ -23,7 +23,7 @@ from hermes2d.examples import get_square_quad_mesh
 
 #  The following parameters can be changed:
 
-SOLVE_ON_COARSE_MESH = True   # If true, coarse mesh FE problem is solved in every adaptivity step.
+SOLVE_ON_COARSE_MESH = False   # If true, coarse mesh FE problem is solved in every adaptivity step.
                                          # If false, projection of the fine mesh solution on the coarse mesh is used.
 INIT_REF_NUM = 1              # Number of initial mesh refinements.
 P_INIT = 2                    # Initial polynomial degree of all mesh elements.
@@ -74,8 +74,8 @@ wf = WeakForm()
 set_forms(wf)
 
 # Initialize views.
-sview = ScalarView("Coarse mesh solution", 0, 0, 440, 350)
-oview = OrderView("Coarse mesh", 450, 0, 400, 350)
+sview = ScalarView("Coarse mesh solution")
+#oview = OrderView("Coarse mesh", 450, 0, 400, 350)
 
 # Initialize refinement selector.
 selector = H1ProjBasedSelector(CAND_LIST, CONV_EXP, H2DRS_DEFAULT_ORDER)

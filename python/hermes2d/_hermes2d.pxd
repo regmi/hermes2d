@@ -7,6 +7,7 @@ cdef extern from "math.h":
     double c_cos "cos"(double x)
     double c_sin "sin"(double x)    
     double c_pi "M_PI"
+    double c_exp "exp"(double x)
 
 #cdef extern from "complex.h":
 
@@ -249,6 +250,12 @@ cdef extern from "hermes2d.h":
         void get_fe_solution(int *Ylen, scalar **Y)
     c_Solution *new_Solution "new Solution" ()
 
+    ctypedef struct c_SolutionTuple "Tuple<Solution*>":
+        void (* push_back)(c_Solution*)
+
+    ctypedef struct c_MeshFunctionTuple "Tuple<MeshFunction*>":
+        void (* push_back)(c_MeshFunction*)
+
     cdef struct c_VonMisesFilter "VonMisesFilter"
     c_VonMisesFilter *new_VonMisesFilter "new VonMisesFilter" (c_MeshFunction *sln1, c_MeshFunction *sln2, double l, double m)
 
@@ -290,7 +297,8 @@ cdef extern from "hermes2d.h":
         void assemble()
         int get_num_dofs()
         int solve(int n, ...)
-        int solve2(int n, ...)        
+        int solve2(int n, ...)
+        void project_global2(int n, ...)
         void save_matrix_matlab(char *filename, char *varname)
         void get_matrix(int *Ap, int *Ai, scalar *Ax, int size)
         void get_rhs(scalar *RHS, int size)
@@ -328,9 +336,6 @@ cdef extern from "hermes2d.h":
 
     ctypedef struct c_L2SpaceTuple "Tuple<Space*>":
         void (* push_back)(c_L2Space*)
-
-    ctypedef struct c_SolutionTuple "Tuple<Solution*>":
-        void (* push_back)(c_Solution*)
 
     ctypedef struct c_ProjBasedSelector "RefinementSelectors::ProjBasedSelector":
         void set_error_weights(double, double, double)

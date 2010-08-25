@@ -5,7 +5,7 @@ from hermes2d._hermes2d cimport scalar, FuncReal, GeomReal, WeakForm, \
 from hermes2d._hermes2d cimport int_F_v_ord
 
 # Problem parameters.
-SLOPE = 60                      # Slope of the layer.
+cdef double SLOPE = 60                      # Slope of the layer.
 
 cdef double fn(double x, double y):
     return c_atan(SLOPE * (c_sqrt(c_sqr(x-1.25) + c_sqr(y+0.25)) - c_pi/3))

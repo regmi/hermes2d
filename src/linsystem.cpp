@@ -205,27 +205,27 @@ void LinSystem::set_spaces(Tuple<Space*> spaces)
 
 void LinSystem::set_spaces2(int n, ...)
 {
-	va_list vl;
-	va_start(vl, n);
+    va_list vl;
+    va_start(vl, n);
 
-	Tuple<Space*> s;
+    Tuple<Space*> s;
 
-	if (n == 1)	{
-		s = Tuple<Space*>(va_arg( vl, Space* ));
-	}
-	else if (n == 2) {
-		s = Tuple<Space*>(va_arg( vl, Space* ), va_arg( vl, Space* ));
-	}
-	else if (n == 3) {
-		s = Tuple<Space*>(va_arg( vl, Space* ), va_arg( vl, Space* ), va_arg( vl, Space* ));
-	}
+    if (n == 1) {
+        s = Tuple<Space*>(va_arg( vl, Space* ));
+    }
+    else if (n == 2) {
+        s = Tuple<Space*>(va_arg( vl, Space* ), va_arg( vl, Space* ));
+    }
+    else if (n == 3) {
+        s = Tuple<Space*>(va_arg( vl, Space* ), va_arg( vl, Space* ), va_arg( vl, Space* ));
+    }
     else if (n == 4) {
-		s = Tuple<Space*>(va_arg( vl, Space* ), va_arg( vl, Space* ), va_arg( vl, Space* ), va_arg( vl, Space* ));
-	}
-	
-	set_spaces(s);
-	
-	va_end(vl);
+        s = Tuple<Space*>(va_arg( vl, Space* ), va_arg( vl, Space* ), va_arg( vl, Space* ), va_arg( vl, Space* ));
+    }
+    
+    set_spaces(s);
+    
+    va_end(vl);
 }
 
  /* warn("Call to deprecated function set_spaces().");
@@ -271,27 +271,27 @@ void LinSystem::set_pss(PrecalcShapeset* pss)
 
 void LinSystem::set_pss2(int n, ...)
 {
-	va_list vl;
-	va_start(vl, n);
+    va_list vl;
+    va_start(vl, n);
 
-	Tuple<PrecalcShapeset*> s;
+    Tuple<PrecalcShapeset*> s;
 
-	if (n == 1)	{
-		s = Tuple<PrecalcShapeset*>(va_arg( vl, PrecalcShapeset* ));
-	}
-	else if (n == 2) {
-		s = Tuple<PrecalcShapeset*>(va_arg( vl, PrecalcShapeset* ), va_arg( vl, PrecalcShapeset* ));
-	}
-	else if (n == 3) {
-		s = Tuple<PrecalcShapeset*>(va_arg( vl, PrecalcShapeset* ), va_arg( vl, PrecalcShapeset* ), va_arg( vl, PrecalcShapeset* ));
-	}
+    if (n == 1) {
+        s = Tuple<PrecalcShapeset*>(va_arg( vl, PrecalcShapeset* ));
+    }
+    else if (n == 2) {
+        s = Tuple<PrecalcShapeset*>(va_arg( vl, PrecalcShapeset* ), va_arg( vl, PrecalcShapeset* ));
+    }
+    else if (n == 3) {
+        s = Tuple<PrecalcShapeset*>(va_arg( vl, PrecalcShapeset* ), va_arg( vl, PrecalcShapeset* ), va_arg( vl, PrecalcShapeset* ));
+    }
     else if (n == 4) {
-		s = Tuple<PrecalcShapeset*>(va_arg( vl, PrecalcShapeset* ), va_arg( vl, PrecalcShapeset* ), va_arg( vl, PrecalcShapeset* ), va_arg( vl, PrecalcShapeset* ));
-	}
-	
-	set_pss(s);
-	
-	va_end(vl);
+        s = Tuple<PrecalcShapeset*>(va_arg( vl, PrecalcShapeset* ), va_arg( vl, PrecalcShapeset* ), va_arg( vl, PrecalcShapeset* ), va_arg( vl, PrecalcShapeset* ));
+    }
+    
+    set_pss(s);
+    
+    va_end(vl);
 }
 
 void LinSystem::copy(LinSystem* sys)
@@ -434,7 +434,7 @@ void LinSystem::assemble(bool rhsonly)
   if (this->spaces == NULL) error("this->spaces = NULL in LinSystem::assemble().");
   int n = this->wf->neq;
   for (int i=0; i<n; i++) if (this->spaces[i] == NULL)
-			    error("this->spaces[%d] is NULL in LinSystem::assemble().", i);
+                error("this->spaces[%d] is NULL in LinSystem::assemble().", i);
 
   // enumerate DOF to get new length of the vectors Vec, RHS and Dir,
   // and realloc these vectors if needed
@@ -596,16 +596,16 @@ void LinSystem::assemble(bool rhsonly)
         }
 
         // insert the local stiffness matrix into the global one
-				if(rhsonly == false)
-					insert_block(mat, am->dof, an->dof, am->cnt, an->cnt);
+                if(rhsonly == false)
+                    insert_block(mat, am->dof, an->dof, am->cnt, an->cnt);
 
         // insert also the off-diagonal (anti-)symmetric block, if required
         if (tra)
         {
           if (jfv->sym < 0) chsgn(mat, am->cnt, an->cnt);
           transpose(mat, am->cnt, an->cnt);
-					if(rhsonly == false)
-						insert_block(mat, an->dof, am->dof, an->cnt, am->cnt);
+                    if(rhsonly == false)
+                        insert_block(mat, an->dof, am->dof, an->cnt, am->cnt);
 
           // we also need to take care of the RHS...
           for (int j = 0; j < am->cnt; j++)
@@ -696,8 +696,8 @@ void LinSystem::assemble(bool rhsonly)
               //printf("%d %d %g\n", i, j, bi);
             }
           }
-					if(rhsonly == false)
-						insert_block(mat, am->dof, an->dof, am->cnt, an->cnt);
+                    if(rhsonly == false)
+                        insert_block(mat, am->dof, an->dof, am->cnt, an->cnt);
         }
 
         // assemble surface linear forms /////////////////////////////////////
@@ -1176,28 +1176,46 @@ bool LinSystem::solve(Tuple<Solution*> sln)
 
 bool LinSystem::solve2(int n, ...)
 {
-	va_list vl;
-	va_start(vl, n);
+    va_list vl;
+    va_start(vl, n);
 
-	Tuple<Solution*> s;
+    Tuple<Solution*> s;
 
-	if (n == 1)	{
-		s = Tuple<Solution*>(va_arg( vl, Solution* ));
-	}
-	else if (n == 2) {
-		s = Tuple<Solution*>(va_arg( vl, Solution* ), va_arg( vl, Solution* ));
-	}
-	else if (n == 3) {
-		s = Tuple<Solution*>(va_arg( vl, Solution* ), va_arg( vl, Solution* ), va_arg( vl, Solution* ));
-	}
+    if (n == 1) {
+        s = Tuple<Solution*>(va_arg( vl, Solution* ));
+    }
+    else if (n == 2) {
+        s = Tuple<Solution*>(va_arg( vl, Solution* ), va_arg( vl, Solution* ));
+    }
+    else if (n == 3) {
+        s = Tuple<Solution*>(va_arg( vl, Solution* ), va_arg( vl, Solution* ), va_arg( vl, Solution* ));
+    }
     else if (n == 4) {
-		s = Tuple<Solution*>(va_arg( vl, Solution* ), va_arg( vl, Solution* ), va_arg( vl, Solution* ), va_arg( vl, Solution* ));
-	}
-	
-	solve(s);
-	
-	va_end(vl);
-	return true;
+        s = Tuple<Solution*>(va_arg( vl, Solution* ), va_arg( vl, Solution* ), va_arg( vl, Solution* ), va_arg( vl, Solution* ));
+    }
+    
+    solve(s);
+    
+    va_end(vl);
+    return true;
+}
+
+void LinSystem::project_global2(int n, ...)
+{
+    va_list vl;
+    va_start(vl, n);
+
+    Tuple<Solution*> s;
+    Tuple<MeshFunction*> m;
+
+    if (n == 2)
+    {
+        s = Tuple<Solution*>(va_arg(vl, Solution*));
+        m = Tuple<MeshFunction*>(va_arg(vl, MeshFunction*));
+    }
+
+    project_global(m, s);
+    va_end(vl);
 }
 
 // single equation case
@@ -1368,7 +1386,7 @@ void LinSystem::project_global(Tuple<MeshFunction*> source, Tuple<Solution*> tar
   int n = source.size();
   if (this->spaces == NULL) error("this->spaces == NULL in LinSystem::project_global().");
   for (int i=0; i<n; i++) if(this->spaces[i] == NULL)
-			    error("this->spaces[%d] == NULL in LinSystem::project_global().", i);
+                error("this->spaces[%d] == NULL in LinSystem::project_global().", i);
   if (n != target.size())
     error("Mismatched numbers of projected functions and solutions in LinSystem::project_global().");
   if (n > 10)
@@ -1443,11 +1461,12 @@ void LinSystem::project_global(Tuple<MeshFunction*> source, Tuple<Solution*> tar
 void LinSystem::project_global( Tuple<MeshFunction*> source, Tuple<Solution*> target,
                                 jacforms_tuple_t proj_biforms, resforms_tuple_t proj_liforms )
 {
+    printf("here 2");
   // sanity checks
   int n = source.size();
   if (this->spaces == NULL) error("this->spaces == NULL in LinSystem::project_global().");
   for (int i=0; i<n; i++) if(this->spaces[i] == NULL)
-			    error("this->spaces[%d] == NULL in LinSystem::project_global().", i);
+                error("this->spaces[%d] == NULL in LinSystem::project_global().", i);
   if (n != target.size())
     error("Mismatched numbers of projected functions and solutions in LinSystem::project_global().");
   if (n > 10)

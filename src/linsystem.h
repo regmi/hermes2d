@@ -152,6 +152,7 @@ public:
   /// them a different proj_norm can be used. This defines the entire coefficient
   /// vector Vec. Calls assign_dofs() at the beginning.
   void project_global(Tuple<MeshFunction*> source, Tuple<Solution*> target, Tuple<int> proj_norms = Tuple<int>());
+  void project_global2(int n, ...);
 
   /// The same as above, but the user may specify the forms that are used in the projection
   /// (useful e.g. when working in curvilinear coordinate systems).
