@@ -21,7 +21,7 @@ from hermes2d.examples import get_square_quad_mesh_smooth_aniso_y
 
 #  The following parameters can be changed:
 
-SOLVE_ON_COARSE_MESH = True    # If true, coarse mesh FE problem is solved in every adaptivity step.
+SOLVE_ON_COARSE_MESH = False    # If true, coarse mesh FE problem is solved in every adaptivity step.
                                          # If false, projection of the fine mesh solution on the coarse mesh is used.
 P_INIT = 1                     # Initial polynomial degree of all mesh elements.
 THRESHOLD = 0.3                # This is a quantitative parameter of the adapt(...) function and
