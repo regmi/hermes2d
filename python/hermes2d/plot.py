@@ -222,6 +222,9 @@ def plot_mesh_mpl(nodes, elements, polygons=None,
 	    patch = PathPatch(p4, facecolor=color_h, lw=0,
 		    edgecolor='#000000')
 	    sp.add_patch(patch)
+	    patch = PathPatch(p_quad, lw=linewidth, facecolor="none",
+		    edgecolor='#000000')
+	    sp.add_patch(patch)
     show_legend = polynomial_orders is not None
 
     if show_legend:
