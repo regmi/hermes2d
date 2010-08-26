@@ -1,12 +1,12 @@
 from hermes2d._hermes2d cimport scalar, FuncReal, GeomReal, WeakForm, \
-        int_grad_u_grad_v, int_v, malloc, ExtDataReal, c_Ord, create_Ord, \
+        int_grad_u_grad_v, int_v, int_u_v, malloc, ExtDataReal, c_Ord, create_Ord, \
         FuncOrd, GeomOrd, ExtDataOrd, H1Space, BC_ESSENTIAL, BC_NATURAL, c_BCType, H2D_SYM, \
         c_atan, c_pi, c_exp, c_sqrt, c_sqr, int_F_v, int_grad_u_grad_v_ord
 from hermes2d._hermes2d cimport int_F_v_ord
 
 
 # Problem parameters.
-cdef double K = 100                       # Slope of the layer.
+cdef double K = 1e2                       # Slope of the layer.
 
 # Boundary condition types.
 cdef c_BCType bc_type(int marker):
@@ -39,11 +39,11 @@ cdef double rhs(double x, double y):
 
 cdef scalar bilinear_form(int n, double *wt, FuncReal **t, FuncReal *u, FuncReal *v, GeomReal
         *e, ExtDataReal *ext):
-    return int_grad_u_grad_v(n, wt, u, v)
+    return int_grad_u_grad_v(n, wt, u, v) + K*K * int_u_v(n, wt, u, v)
 
 cdef scalar linear_form(int n, double *wt, FuncReal **t, FuncReal *u, GeomReal
         *e, ExtDataReal *ext):
-    return -int_F_v(n, wt, rhs, u, e)
+    return int_F_v(n, wt, rhs, u, e)
 
 cdef c_Ord linear_form_ord(int n, double *wt, FuncOrd **t, FuncOrd *v, GeomOrd
         *e, ExtDataOrd *ext):

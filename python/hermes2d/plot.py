@@ -1,3 +1,5 @@
+from numpy import array
+
 from hermes2d import Linearizer, Solution
 
 def sln2png(sln, filename):
@@ -157,12 +159,39 @@ def plot_mesh_mpl(nodes, elements, polygons=None,
     for el_id in polygons:
         x = list(polygons[el_id][:, 0])
         y = list(polygons[el_id][:, 1])
-        x.append(x[0])
-        y.append(y[0])
-        vertices = zip(x, y)
-        codes = [Path.MOVETO] + [Path.LINETO]*(len(vertices)-2) + \
+	x = array(x)
+	y = array(y)
+	assert len(x) == 4
+	assert len(y) == 4
+	middle_x = sum(x)/4.
+	middle_y = sum(y)/4.
+	t1_x = [x[0], x[1], middle_x, x[0]]
+	t1_y = [y[0], y[1], middle_y, y[0]]
+	t1 = zip(t1_x, t1_y)
+	t2_x = [x[1], x[2], middle_x, x[1]]
+	t2_y = [y[1], y[2], middle_y, y[1]]
+	t2 = zip(t2_x, t2_y)
+	t3_x = [x[2], x[3], middle_x, x[2]]
+	t3_y = [y[2], y[3], middle_y, y[2]]
+	t3 = zip(t3_x, t3_y)
+	t4_x = [x[3], x[0], middle_x, x[3]]
+	t4_y = [y[3], y[0], middle_y, y[3]]
+	t4 = zip(t4_x, t4_y)
+	x = list(x)
+	x.append(x[0])
+	y = list(y)
+	y.append(y[0])
+	vertices = zip(x, y)
+        codes = [Path.MOVETO] + [Path.LINETO]*(len(t1)-2) + \
                     [Path.CLOSEPOLY]
-        p = Path(vertices, codes)
+        codes_quad = [Path.MOVETO] + [Path.LINETO]*(len(vertices)-2) + \
+                    [Path.CLOSEPOLY]
+        p1 = Path(t1, codes)
+        p2 = Path(t2, codes)
+        p3 = Path(t3, codes)
+        p4 = Path(t4, codes)
+        p_quad = Path(vertices, codes_quad)
+	paths = [p1, p2, p3, p4]
         if edges_only:
             color = "white"
             linewidth = 2
@@ -170,11 +199,29 @@ def plot_mesh_mpl(nodes, elements, polygons=None,
             if polynomial_orders is None:
                 color = colors[0]
             else:
-                color = colors[polynomial_orders[el_id]]
+		order = polynomial_orders[el_id]
+		h = order & ((1 << 5) - 1)
+		v = order >> 5
+                color_h = colors[h]
+                color_v = colors[v]
             linewidth = 1
-        patch = PathPatch(p, facecolor=color, lw=linewidth,
-                edgecolor='#000000')
-        sp.add_patch(patch)
+	if color_h == color_v:
+	    patch = PathPatch(p_quad, facecolor=color_h, lw=linewidth,
+		    edgecolor='#000000')
+	    sp.add_patch(patch)
+	else:
+	    patch = PathPatch(p1, facecolor=color_v, lw=0,
+		    edgecolor='#000000')
+	    sp.add_patch(patch)
+	    patch = PathPatch(p3, facecolor=color_v, lw=0,
+		    edgecolor='#000000')
+	    sp.add_patch(patch)
+	    patch = PathPatch(p2, facecolor=color_h, lw=0,
+		    edgecolor='#000000')
+	    sp.add_patch(patch)
+	    patch = PathPatch(p4, facecolor=color_h, lw=0,
+		    edgecolor='#000000')
+	    sp.add_patch(patch)
     show_legend = polynomial_orders is not None
 
     if show_legend:

@@ -117,7 +117,7 @@ while(not done):
 
     # View the solution and mesh.
     sview.show(sln_coarse)
-    mesh.plot(space)
+    mesh.plot(mesh, notebook = True, filename="b%02d.png" % it, space=space)
 
     # Calculate error estimate wrt. fine mesh solution.
     print("Calculating error (est).")

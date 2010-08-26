@@ -545,19 +545,19 @@ cdef class Mesh:
             el = self.get_element(i)
             if el.active:
                 order = space.get_element_order(i)
-                h = order & ((1 << 5) - 1)
-                v = order >> 5
+		#h = order & ((1 << 5) - 1)
+		#v = order >> 5
 
-                import math
+		#import math
                 # This uses the maximum of "h", "v", as we can't yet plot
                 # anisotropic polynomial degrees
-                ord = max(h, v)
+		#ord = max(h, v)
                 #ord = int(((h+v)/2.0))
-                if ord == 0:
-                    ord = 1
+		#if ord == 0:
+		#    ord = 1
 
                 #orders_list.append(int(((h+v)/2.0)))
-                orders_list[el.id] = ord
+                orders_list[el.id] = order
 
         return orders_list
 
