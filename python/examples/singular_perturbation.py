@@ -72,7 +72,7 @@ wf = WeakForm()
 set_forms(wf)
 
 # Initialize views.
-sview = ScalarView("Coarse mesh solution")
+sview = ScalarView("Coarse solution")
 #OrderView  oview("Polynomial orders")
 
 # Initialize refinement selector.
