@@ -1,5 +1,32 @@
 from hermes2d import Linearizer, Solution
 
+def get_plot_data(h_sln, h_mesh, h_space):
+    from hermes2d import Linearizer
+
+    lin = Linearizer()
+    lin.process_solution(h_sln)
+    vert = lin.get_vertices()
+    triangles = lin.get_triangles()
+
+    from numpy import zeros
+
+    x = vert[:, 0]
+    y = vert[:, 1]
+    z = zeros(len(y))
+    t = vert[:, 2]
+
+    nodes = zip(x, y)
+    #ord = h_mesh.get_elements_order(h_space)
+
+    #print ord
+    from femhub import Mesh, Solution
+    mesh = Mesh(nodes, triangles, [], [], orders=[])
+
+    sol = Solution(mesh)
+    sol.set_values(x, y, triangles, t)
+
+    return sol
+
 def sln2png(sln, filename):
     """
     Creates a nice png image of the Solution sln.
